@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your plan · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  /* Structure: sticky discount header → Now / Your goal → title → plans, checkbox, button and terms → guarantee →
+     dietitian and "featured in" → reviews → how your plan works and key facts → FAQ → plans again → guarantee again. */
+  /* Sticky discount timer, like the reference: big minutes : seconds with labels, and the button beside it.
+     The discount and the timer stay one element (R-40). */
+  /* Not sticky: the sticky bar at the bottom is the one sticky CTA, as on the live page. A sticky top is a later A/B test. */
+  .pw-top { position: relative; z-index: 15; margin: 0 calc(-1 * var(--gutter)); background: var(--surface); box-shadow: 0 4px 14px rgba(31,38,34,.06); }
+  /* Personal strip: her name and the reserved discount (no "hot" language). */
+  .pw-strip { background: var(--sand-100); color: var(--brown); font-size: 13.5px; font-weight: 700; text-align: center; padding: 7px var(--gutter); margin: 0; }
+  .pw-strip em { font-style: normal; color: var(--coral); }
+  .pw-deal { padding: 8px var(--gutter) 10px; display: flex; align-items: center; gap: 14px; }
+  /* The bar shrinks with the time left. No caption: the movement says it, without pressure. */
+  .pw-runout { height: 5px; background: #ece5d8; }
+  .pw-runout i { display: block; height: 100%; width: 100%; border-radius: 0 3px 3px 0; background: linear-gradient(90deg, var(--tan), #c8603f); transition: width 1s linear; }
+  .pw-deal__k { font-size: 12px; font-weight: 700; color: var(--muted); margin: 0 0 2px; white-space: nowrap; }
+  .pw-deal__k em { font-style: normal; color: var(--coral); }
+  .pw-digits { display: flex; align-items: flex-start; gap: 6px; font-variant-numeric: tabular-nums; }
+  .pw-digits span { display: flex; flex-direction: column; align-items: center; }
+  .pw-digits b { font-size: 30px; line-height: 1; font-weight: 800; color: var(--ink); letter-spacing: -.01em; }
+  .pw-digits i { font-style: normal; font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .pw-digits .colon { font-size: 26px; line-height: 1.05; color: #a39c90; font-weight: 800; }
+  .pw-deal__btn { margin-left: auto; flex: none; height: 46px; padding: 0 24px; border: 0; background: var(--green-700); color: #fff; font-weight: 800; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; border-radius: 99px; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(36,90,64,.25); }
+  .pw-deal__btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--green-700); }
+  .pw-deal.is-over .pw-digits b { color: var(--muted); }
+
+  .pw-title { font-size: 31px; line-height: 1.15; margin: 28px 0 8px; text-align: center; }
+  .pw-sub { text-align: center; color: var(--green-700); font-size: 16px; font-weight: 600; margin: 0 0 20px; }
+  .pw-panel { background: var(--sand-100); border-radius: var(--radius-l); padding: 20px 14px; }
+  .pw-panel__title { font-family: var(--serif); font-weight: 400; font-size: 23px; text-align: center; margin: 0 0 16px; }
+  /* Now / Your goal, like the reference: tabs, the same woman now and at her goal (labelled illustration),
+     then two columns of her own numbers. */
+  .pw-cmp { margin-top: 12px; background: var(--surface); border-radius: var(--radius-l); box-shadow: var(--shadow); overflow: hidden; }
+  .pw-cmp__tabs { display: grid; grid-template-columns: 1fr 1fr; text-align: center; font-size: 16px; font-weight: 700; padding: 12px 0; }
+  .pw-cmp__tabs span + span { border-left: 1px solid var(--line); color: var(--green-700); }
+  .pw-cmp__photos { position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 280px; overflow: hidden; background: linear-gradient(180deg, var(--sand-50), var(--sand-100)); }
+  /* Larger figures, framed head to knee like the reference; the rest is cropped by the block. */
+  .pw-cmp__photos img { width: 100%; height: 100%; min-height: 0; object-fit: cover; object-position: center 4%; }
+  /* Three chevrons light up in turn, left to right: a gentle "from now to goal" movement, sand to green. */
+  .pw-cmp__arrow { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; gap: 0; }
+  .pw-cmp__arrow svg { margin: 0 -5px; opacity: .25; animation: pwchev 1.6s ease-in-out infinite; }
+  .pw-cmp__arrow svg:nth-child(1) { color: var(--tan); }
+  .pw-cmp__arrow svg:nth-child(2) { color: #8c8a5a; animation-delay: .2s; }
+  .pw-cmp__arrow svg:nth-child(3) { color: var(--green-700); animation-delay: .4s; }
+  @keyframes pwchev { 0%, 100% { opacity: .25; transform: translateX(0); } 40% { opacity: 1; transform: translateX(3px); } }
+  @media (prefers-reduced-motion: reduce) { .pw-cmp__arrow svg { animation: none; opacity: 1; } }
+  /* One stat only: her weight now and at the goal, with the difference between them. */
+  .pw-cmp__stats { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 16px; text-align: center; } /* labels live in the tabs above; here only the numbers */
+  .pw-cmp__v { font-family: var(--serif); font-size: 28px; line-height: 1.1; margin: 0; }
+  .pw-cmp__stats > div + div + div .pw-cmp__v { color: var(--green-700); }
+  .pw-cmp__diff { background: var(--green-50); color: var(--green-800); font-weight: 800; font-size: 14px; border-radius: 99px; padding: 5px 10px; white-space: nowrap; }
+
+  /* Plans: stacked cards with a radio and price per day (reference layout) */
+  .pw-plans { display: grid; gap: 16px; } /* plans 16px apart; the gift sits closer to its plan (10px), so it reads as part of the 6-month plan */
+  .pw-plan { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 14px; background: var(--surface); border: 2px solid #cfe0d4; border-radius: var(--radius); box-shadow: var(--shadow); cursor: pointer; text-align: left; color: var(--ink); }
+  .pw-plan[aria-checked="true"] { border-color: var(--green-700); background: var(--green-50); }
+  .pw-plan__radio { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #5f9676; /* soft green, 3.4:1 on white (controls need 3:1) */ flex: none; display: grid; place-items: center; background: var(--surface); }
+  .pw-plan[aria-checked="true"] .pw-plan__radio { border-color: var(--green-700); }
+  .pw-plan[aria-checked="true"] .pw-plan__radio::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--green-700); }
+  .pw-plan__main { flex: 1; min-width: 0; }
+  .pw-plan__name { display: block; font-weight: 800; font-size: 16px; }
+  .pw-plan__total { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .pw-plan__total s { margin-right: 4px; }
+  .pw-plan__day:not(:has(s)) { align-self: center; }
+  .pw-plan__day { text-align: right; flex: none; background: var(--green-50); border-radius: 12px; padding: 6px 10px; min-width: 86px; }
+  .pw-plan[aria-checked="true"] .pw-plan__day { background: var(--green-700); color: #fff; }
+  .pw-plan__day s { display: block; font-size: 12px; opacity: .9; }
+  .pw-plan__day b { display: block; font-size: 20px; line-height: 1.1; }
+  .pw-plan__day span { font-size: 12px; }
+  .pw-plan__badge { position: absolute; top: -11px; left: 14px; background: var(--green-700); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .05em; border-radius: 99px; padding: 3px 10px; }
+  .pw-plan__save { display: inline-block; margin-left: 6px; background: var(--coral-100); color: var(--coral); font-size: 12px; font-weight: 800; border-radius: 6px; padding: 1px 6px; vertical-align: 1px; } /* 8.1:1 */
+  .pw-plan[aria-checked="true"] .pw-plan__save { background: #8e3418; color: #fff; }
+  .pw-why6 { font-size: 14px; color: var(--ink-2); font-weight: 600; margin: 12px 0 0; text-align: center; line-height: 1.4; }
+
+  .pw-agree { display: flex; gap: 10px; align-items: center; font-size: 15px; color: var(--ink); margin: 16px 0 12px; cursor: pointer; }
+  .pw-agree-msg { color: var(--error); font-size: 15px; font-weight: 700; margin: -4px 0 12px; display: none; }
+  .pw-agree-msg.is-visible { display: block; }
+  .pw-terms { font-size: 13px; color: var(--muted); margin: 12px 0 0; line-height: 1.45; text-align: center; }
+
+  /* Dietitian reminder: one white card, photo and name, her line, then the media logos as a supplement. */
+  .pw-diet { background: var(--surface); border-radius: var(--radius-l); box-shadow: var(--shadow); padding: 16px; }
+  .pw-diet__head { display: flex; gap: 14px; align-items: center; }
+  .pw-diet__photo { position: relative; flex: none; width: 64px; height: 64px; }
+  .pw-diet__photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; border-radius: 50%; display: block; }
+  .pw-diet__photo .rd-verified { position: absolute; right: -2px; bottom: -2px; border: 2px solid var(--surface); }
+  .pw-diet__name { font-weight: 800; font-size: 17px; margin: 0; }
+  .pw-diet__cred { font-size: 14px; color: var(--green-700); font-weight: 700; margin: 2px 0 0; line-height: 1.35; }
+  .pw-diet__txt { font-size: 15px; color: var(--muted); margin: 12px 0 0; line-height: 1.45; }
+  .pw-diet__media { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
+  .pw-diet__media p { text-align: center; font-size: 13px; color: var(--muted); margin: 0 0 12px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  /* Guarantee: one light-green card. The badge is our own "pebble" shape (as on the tiles), not a medal. */
+  .pw-guar { display: flex; gap: 14px; align-items: center; background: var(--sand-100); border-radius: var(--radius-l); padding: 16px 18px; } /* same style as the key facts card: sand card, white pebble, brown text */
+  .pw-guar__seal { flex: none; width: 64px; height: 58px; background: var(--surface); color: var(--brown); display: grid; place-items: center; text-align: center;
+                   border-radius: 72% 28% 64% 36% / 38% 62% 30% 70%; transform: rotate(-8deg); }
+  .pw-guar__seal span { transform: rotate(8deg); font-weight: 800; font-size: 16px; line-height: 1; letter-spacing: -.01em; }
+  .pw-guar__title { font-size: 17px; font-weight: 800; margin: 0; color: var(--ink); }
+  .pw-guar__text { font-size: 14px; color: var(--muted); margin: 3px 0 0; line-height: 1.4; }
+
+  .pw-story { background: var(--surface); border-radius: var(--radius-l); box-shadow: var(--shadow); overflow: hidden; }
+  /* Real before/after pairs from the live paywall, side by side, with tags. */
+  .pw-story__photos { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 250px; }
+  .pw-story__photos figure { position: relative; margin: 0; overflow: hidden; }
+  .pw-story__photos img { width: 100%; height: 100%; object-fit: cover; object-position: center 12%; display: block; }
+  .pw-story__photos figcaption { position: absolute; left: 8px; bottom: 8px; background: rgba(31,38,34,.78); color: #fff; font-size: 12px; font-weight: 800; border-radius: 99px; padding: 3px 9px; }
+  .pw-story__photos figcaption.is-after { background: var(--green-700); }
+  .pw-story__body { padding: 16px; }
+  .pw-story__head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pw-story__who { font-weight: 800; font-size: 16px; margin: 0; }
+  .pw-story__res { background: var(--green-700); color: #fff; font-weight: 800; font-size: 14px; border-radius: 99px; padding: 3px 10px; white-space: nowrap; }
+  .pw-story__meta { font-size: 14px; color: var(--muted); margin: 2px 0 8px; }
+  .pw-story__txt { font-size: 15px; margin: 0; }
+
+  /* How your plan works: 3 step cards in a slider, then three key facts. */
+  .pw-keys { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .pw-keys li { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 6px; font-size: 12.5px; font-weight: 700; line-height: 1.25; color: var(--ink); }
+  .pw-keys__ic { width: 46px; height: 42px; margin: 0 auto 8px; background: var(--sand-100); display: grid; place-items: center; color: var(--brown); } /* pebble, see .rd-pebble */
+  .pw-steps { align-items: stretch; }
+  .pw-step { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--radius-l); box-shadow: var(--shadow); overflow: hidden; }
+  .pw-step__media { height: 170px; background: #d9c8ad; flex: none; }
+  .pw-step__media--done { background: var(--sand-100); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  .pw-step__media--done p { margin: 0; font-weight: 700; color: var(--ink); }
+  .pw-step__done { width: 64px; height: 58px; background: var(--green-700); display: grid; place-items: center; }
+  .pw-step__body { padding: 16px; }
+  .pw-step__n { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brown); margin: 0; }
+  .pw-step__t { font-family: var(--serif); font-weight: 400; font-size: 21px; margin: 2px 0 6px; }
+  .pw-step__lead { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+  .pw-step__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .pw-step__list li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 15px; line-height: 1.35; }
+  .pw-step__list .rd-list__dot { width: 22px; height: 22px; }
+  .pw-gift { position: relative; display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1.5px dashed #8fb59c; border-radius: var(--radius); padding: 12px; margin-top: -6px; }
+  /* "+" joint: centred in the 10px gap between the plan card and the gift (16px grid gap - 6px margin; 1.5px border). */
+  .pw-gift__plus { position: absolute; left: 50%; top: -19.5px; transform: translateX(-50%); width: 26px; height: 26px; border-radius: 50%; background: var(--surface); border: 1.5px solid #8fb59c; color: var(--green-700); display: grid; place-items: center; z-index: 1; }
+  .pw-gift__plus svg { display: block; }
+  .pw-gift__book { width: 40px; height: 50px; border-radius: 7px; background: var(--green-700); color: #fff; flex: none; padding: 5px 4px; display: flex; flex-direction: column; justify-content: space-between; font: 800 6.5px/1.1 var(--sans); letter-spacing: .04em; transform: rotate(-4deg); box-shadow: 0 2px 5px rgba(31,38,34,.2); }
+  .pw-gift.is-off { border-color: var(--line-strong); }
+  .pw-gift.is-off .pw-gift__book { opacity: .4; }
+  .pw-gift.is-off .pw-gift__plus { border-color: var(--line-strong); color: var(--muted); }
+  .pw-gift__switch { border: 0; background: none; padding: 0; margin-top: 2px; font: inherit; font-size: 14px; font-weight: 700; color: var(--green-700); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .pw-gift p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.35; } .pw-gift b { display: block; color: var(--ink); font-size: 15px; }
+
+  .pw-faq details { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0 16px; }
+  .pw-faq details + details { margin-top: 8px; }
+  .pw-faq summary { list-style: none; cursor: pointer; padding: 16px 0; font-weight: 700; display: flex; justify-content: space-between; gap: 10px; }
+  .pw-faq summary::-webkit-details-marker { display: none; }
+  .pw-faq summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--green-700); }
+  .pw-faq details[open] summary::after { content: "–"; }
+  /* Open answer: 6px under the question, 16px to the bottom of the card. */
+  .pw-faq details[open] summary { padding-bottom: 6px; }
+  .pw-faq details p { margin: 0; padding: 0 0 16px; font-size: 15px; color: var(--muted); line-height: 1.45; }
+
+  .pw-sticky { transform: translateY(110%); transition: transform .25s; }
+  .pw-sticky.is-visible { transform: none; }
+  .pw-cta-end { margin-top: 0; } /* the checkbox above already leaves 12px */
+  /* One clear trust line under the last button (replaces the two "safe / secure" tiles). */
+  .pw-secure { text-align: center; font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+  .pw-secure svg { color: var(--green-700); vertical-align: -2px; margin-right: 6px; }
+  /* Section title to carousel: the carousel keeps 4px above the cards for their shadow, so pull it up
+     to match the 16px under every other section title. */
+  .rd-section__title + .rd-carousel { margin-top: -4px; }
+  /* The sticky bar is hidden at the end of the page, so the page doesn't need room for it. */
+  main.page { padding-bottom: 32px; }
+  .pw-footer { font-size: 13px; color: var(--muted); text-align: center; margin-top: 40px; line-height: 1.5; }
+
+  /* Super-discount pop-up (redesigned, not removed: R-37): a calm bottom sheet in the page's style. */
+  .sd-head { display: flex; gap: 14px; align-items: center; }
+  /* Gift: the lid pops open once as the sheet slides up, a few sparkles come out, the lid closes (user's choice, variant A).
+     Plays once, inside the pop-up only: not a looping, attention-pulling gift on the page (R-40). */
+  .sd-gift { flex: none; width: 64px; height: 64px; overflow: visible; }
+  .sd-gift__lid { transform-box: view-box; transform-origin: 9px 32px; }
+  .sd-gift__spark { opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .rd-sheet.is-open .sd-gift__lid { animation: sdLid 1.1s cubic-bezier(.3,1.4,.5,1) .4s both; }
+  .rd-sheet.is-open .sd-gift__spark { animation: sdSpark .9s ease-out .6s both; }
+  .rd-sheet.is-open .sd-gift__spark:nth-of-type(2) { animation-delay: .67s; }
+  .rd-sheet.is-open .sd-gift__spark:nth-of-type(3) { animation-delay: .75s; }
+  @keyframes sdLid { 0% { transform: none; } 35% { transform: translate(-2px, -10px) rotate(-18deg); } 70% { transform: translate(-1px, -7px) rotate(-12deg); } 100% { transform: none; } }
+  @keyframes sdSpark { 0% { opacity: 0; transform: scale(.2); } 40% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: scale(.6) translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .sd-gift * { animation: none !important; } }
+  .sd-pill { display: inline-block; background: #8e3418; color: #fff; font-weight: 800; font-size: 12px; border-radius: 6px; padding: 2px 8px; letter-spacing: .05em; text-transform: uppercase; }
+  .sd-title { font-family: var(--serif); font-size: 23px; line-height: 1.2; margin: 6px 0 0; color: var(--ink); }
+  .sd-price { margin: 16px 0 12px; padding: 14px 16px; border-radius: var(--radius); background: var(--sand-100); }
+  .sd-price div { display: flex; align-items: baseline; gap: 10px; }
+  .sd-price s { color: var(--muted); font-size: 16px; }
+  .sd-price b { font-family: var(--serif); font-size: 30px; line-height: 1.1; color: var(--ink); font-weight: 400; }
+  .sd-price span { font-size: 14px; color: var(--muted); }
+  .sd-price p { margin: 4px 0 0; font-size: 14px; color: var(--brown); font-weight: 700; }
+  .sd-note { font-size: 14px; color: var(--muted); margin: 0 0 16px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <!-- One discount element, with a shortcut to the plans (R-40). -->
+  <div class="pw-top">
+    <p class="pw-strip" id="strip"></p>
+    <div class="pw-deal" id="deal">
+      <div class="pw-deal__clock" role="timer" aria-live="off">
+        <p class="pw-deal__k" id="dealText"><em id="dealPct">75%</em> off reserved for</p>
+        <div class="pw-digits" aria-label="Time left"><span><b id="mm">10</b><i>minutes</i></span><b class="colon" aria-hidden="true">:</b><span><b id="ss">00</b><i>seconds</i></span></div>
+        <span id="time" hidden></span>
+      </div>
+      <button class="pw-deal__btn" type="button" id="dealBtn">Get now</button>
+    </div>
+    <div class="pw-runout" aria-hidden="true"><i id="runout"></i></div>
+  </div>
+  <div data-rd-header></div>
+
+  <section class="pw-cmp" aria-label="Your weight now and at your goal">
+    <div class="pw-cmp__tabs"><span>Now</span><span>Your goal</span></div>
+    <div class="pw-cmp__photos">
+      <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/pw-now.webp" alt="">
+      <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/pw-goal.webp" alt="">
+      <span class="pw-cmp__arrow" aria-hidden="true"><svg width="20" height="26" viewBox="0 0 20 26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l7 7-7 7"/></svg><svg width="20" height="26" viewBox="0 0 20 26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l7 7-7 7"/></svg><svg width="20" height="26" viewBox="0 0 20 26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l7 7-7 7"/></svg></span>
+    </div>
+    <div class="pw-cmp__stats">
+      <div><p class="pw-cmp__v" id="now"></p></div>
+      <span class="pw-cmp__diff" id="diff"></span>
+      <div><p class="pw-cmp__v" id="after"></p></div>
+    </div>
+  </section>
+  <!-- Order like the reference: the image first, then the title, then the prices (chips dropped here). -->
+  <h1 class="rd-title pw-title" id="headline">Get your personal weight loss program</h1>
+  <p class="pw-sub">Over 2 million plans created!</p>
+
+  <!-- Plans, button and terms in one panel with its own heading, like the reference. -->
+  <section id="plans" class="pw-panel">
+    <h2 class="pw-panel__title">Select your plan</h2>
+    <div class="pw-plans" role="radiogroup" aria-label="Plans" data-plans></div>
+    <p class="pw-why6" id="why6"></p>
+    <label class="pw-agree"><input type="checkbox" class="rd-checkbox" id="agree" data-agree><span>I agree with the <a href="#">T&amp;Cs</a> and <a href="#">Privacy Policy</a></span></label>
+    <p class="pw-agree-msg">Please agree to continue</p>
+    <button class="rd-cta" type="button" id="cta">Get my plan</button>
+    <p class="pw-terms" id="terms"></p>
+  </section>
+
+  <!-- Guarantee right under the plans and the button (R-41). -->
+  <section class="rd-section">
+    <div class="pw-guar">
+      <div class="pw-guar__seal" aria-hidden="true"><span>100%</span></div>
+      <div><p class="pw-guar__title">30-day money-back guarantee</p><p class="pw-guar__text">Get 100% of your money back if you don't see visible results after following your program.</p></div>
+    </div>
+  </section>
+
+  <!-- The same dietitian she met on step 5, as a short reminder (R-17, R-34, R-44). Media logos come after, as a supplement. -->
+  <section class="rd-section pw-diet">
+    <div class="pw-diet__head">
+      <span class="pw-diet__photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/_9W-8sE5OG-320.webp" alt="Dietitian portrait" loading="lazy"><span class="rd-verified" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+      <div><p class="pw-diet__name">Dietitian's full name</p><p class="pw-diet__cred">Certified dietitian · women's health and menopause</p></div>
+    </div>
+    <p class="pw-diet__txt">“I check every plan before you start, and adjust it as your body responds.”</p>
+    <div class="pw-diet__media">
+      <p>Our methods featured in</p>
+    <div class="rd-media-logos">
+        <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/Qx0LIIF5_z-240.svg" alt="The Washington Post">
+        <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/RqW7AYVni--142.svg" alt="Medical News Today">
+        <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/t60nq9lI_y-103.svg" alt="CNN">
+      </div>
+    </div>
+  </section>
+
+  <section class="rd-section" id="proof">
+    <h2 class="rd-section__title">Real women, real results</h2>
+    <div class="rd-carousel" id="car" aria-label="Success stories">
+      <article class="pw-story"><div class="pw-story__photos"><figure><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/QK4f1R2M0O-375.webp" alt="Linda before" loading="lazy"><figcaption>Before</figcaption></figure><figure><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/3clBSid5Uf-375.webp" alt="Linda after" loading="lazy"><figcaption class="is-after">After</figcaption></figure></div><div class="pw-story__body"><div class="pw-story__head"><p class="pw-story__who">Linda, 57</p><span class="pw-story__res" data-lbs="14">−14 lbs</span></div><p class="pw-story__meta">Postmenopause · 3 months</p><p class="pw-story__txt">“The first plan that fit my body after menopause. Slow, but it stayed off.”</p></div></article>
+      <article class="pw-story"><div class="pw-story__photos"><figure><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/m3O9bqiCIL-375.webp" alt="Karen before" loading="lazy"><figcaption>Before</figcaption></figure><figure><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/29ijRnH4Dz-375.webp" alt="Karen after" loading="lazy"><figcaption class="is-after">After</figcaption></figure></div><div class="pw-story__body"><div class="pw-story__head"><p class="pw-story__who">Karen, 54</p><span class="pw-story__res" data-lbs="9">−9 lbs</span></div><p class="pw-story__meta">Menopause · 2 months</p><p class="pw-story__txt">“My evening cravings eased within weeks.”</p></div></article>
+      <article class="pw-story"><div class="pw-story__photos"><figure><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/NcTZlKFsYY-375.webp" alt="Diane before" loading="lazy"><figcaption>Before</figcaption></figure><figure><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/FfGBFi2YHe-375.webp" alt="Diane after" loading="lazy"><figcaption class="is-after">After</figcaption></figure></div><div class="pw-story__body"><div class="pw-story__head"><p class="pw-story__who">Diane, 61</p><span class="pw-story__res" data-lbs="18">−18 lbs</span></div><p class="pw-story__meta">Postmenopause · 5 months</p><p class="pw-story__txt">“Fifteen minutes of workouts at home. I never thought I'd stick to it.”</p></div></article>
+    </div>
+    <div class="rd-dots" id="dots"></div>
+  </section>
+
+  <!-- The live page's "3 steps" section as a slider: each step one card with a visual and a short list
+       (the repeated chart and long intros dropped), then the three key facts. -->
+  <section class="rd-section pw-inc">
+    <h2 class="rd-section__title">How your plan works</h2>
+    <div class="rd-carousel pw-steps" id="steps" aria-label="How your plan works, 3 steps">
+      <article class="pw-step">
+        <div class="pw-step__media pw-step__media--done"><span class="pw-step__done rd-pebble" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><p>You've already done this step</p></div>
+        <div class="pw-step__body"><p class="pw-step__n">Step 1 of 3</p><h3 class="pw-step__t">Your plan is ready</h3><p class="pw-step__lead">We used your answers to build a plan that will:</p>
+        <ul class="pw-step__list"><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Help you lose weight with fewer cravings</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Show you exactly what to eat, every day</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Ease your menopause symptoms</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Lift your energy, naturally</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Help you sleep deeper</span></li></ul></div>
+      </article>
+      <article class="pw-step">
+        <div class="pw-step__media pw-step__media--done"><span class="pw-step__done rd-pebble" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3"/><path d="M17 21V3c-2 1-3.5 3.5-3.5 7s1.5 4 3.5 4"/></svg></span><p>Your plan starts today</p></div>
+        <div class="pw-step__body"><p class="pw-step__n">Step 2 of 3</p><h3 class="pw-step__t">Start losing weight</h3><p class="pw-step__lead">Everything you need, in one app:</p>
+        <ul class="pw-step__list"><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>A meal plan made for menopause symptoms</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>200+ easy recipes to pick from</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>A progress tracker that keeps you going</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Dietitians and coaches, 24/7</span></li></ul></div>
+      </article>
+      <article class="pw-step">
+        <div class="pw-step__media pw-step__media--done"><span class="pw-step__done rd-pebble" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.2c-2.2 0-3.7 1.2-3.7 2.8s1.5 2.8 3.7 2.8c3.3 0 6.7-5.6 10-5.6 2.2 0 3.7 1.2 3.7 2.8s-1.5 2.8-3.7 2.8c-3.3 0-6.7-5.6-10-5.6z"/></svg></span><p>Results that last</p></div>
+        <div class="pw-step__body"><p class="pw-step__n">Step 3 of 3</p><h3 class="pw-step__t">Keep the weight off</h3><p class="pw-step__lead">Most members also learn to keep it off on their own:</p>
+        <ul class="pw-step__list"><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Know the right portion at a glance</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Fit in snacks and desserts without gaining</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Stay active at any age, and enjoy it</span></li><li><span class="rd-list__dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Break the yo-yo cycle for good</span></li></ul></div>
+      </article>
+    </div>
+    <div class="rd-dots" id="stepDots"></div>
+    <!-- Key facts: three white tiles on a sand card, under the steps slider. -->
+    <ul class="pw-keys">
+      <li><span class="pw-keys__ic rd-pebble" aria-hidden="true"><svg width="21.8" height="21.8" viewBox="2.5 2 19 19" fill="none" stroke="currentColor" stroke-width="1.74" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M10 13l4 4M14 13l-4 4"/></svg></span>Cancel anytime</li>
+      <li><span class="pw-keys__ic rd-pebble" aria-hidden="true"><svg width="14.7" height="22.0" viewBox="4.65 1 14.69 22" fill="none" stroke="currentColor" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11.22C11 9.997 10 9 10 8a2 2 0 0 1 4 0c0 1-.998 2.002-2.01 3.22"/><path d="m12 18 2.57-3.5"/><path d="M6.243 9.016a7 7 0 0 1 11.507-.009"/><path d="M9.35 14.53 12 11.22"/><path d="M9.35 14.53C7.728 12.246 6 10.221 6 7a6 5 0 0 1 12 0c-.005 3.22-1.778 5.235-3.43 7.5l3.557 4.527a1 1 0 0 1-.203 1.43l-1.894 1.36a1 1 0 0 1-1.384-.215L12 18l-2.679 3.593a1 1 0 0 1-1.39.213l-1.865-1.353a1 1 0 0 1-.203-1.422z"/></svg></span>Supports women with cancer</li>
+      <li><span class="pw-keys__ic rd-pebble" aria-hidden="true"><svg width="20.8" height="21.5" viewBox="4 2.5 17 17.5" fill="none" stroke="currentColor" stroke-width="1.63" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9z"/><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16M8.5 3.5c0 1 1 1.5 1 2.5s-1 1.5-1 2.5M12.5 3.5c0 1 1 1.5 1 2.5s-1 1.5-1 2.5"/></svg></span>Less than a coffee a day</li>
+    </ul>
+
+  </section>
+
+  <section class="rd-section pw-faq">
+    <h2 class="rd-section__title">People often ask</h2>
+    <details><summary>Is it safe with my health conditions?</summary><p>Your dietitian reviews your plan with the conditions you told us about before you start, and adjusts it if anything changes. Always follow your doctor's advice.</p></details>
+    <details><summary>What if I don't like cooking?</summary><p>Most recipes take 15–20 minutes, with simple ingredients. You can swap any meal you don't like.</p></details>
+    <details><summary>How do I cancel?</summary><p>Cancel anytime from your account. You keep access until the end of the period you paid for.</p></details>
+  </section>
+
+  <section class="rd-section pw-panel">
+    <h2 class="pw-panel__title">Start today</h2>
+    <div class="pw-plans" role="radiogroup" aria-label="Plans" data-plans></div>
+    <label class="pw-agree"><input type="checkbox" class="rd-checkbox" data-agree><span>I agree with the <a href="#">T&amp;Cs</a> and <a href="#">Privacy Policy</a></span></label>
+    <p class="pw-agree-msg">Please agree to continue</p>
+    <button class="rd-cta pw-cta-end" type="button" id="ctaEnd" data-cta2>Get my plan</button>
+    <p class="pw-secure"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout. Your payment details are encrypted.</p>
+  </section>
+
+  <!-- The guarantee again next to the last button, as on the live page: its own block, not part of the plans panel. -->
+  <section class="rd-section pw-guar-end">
+    <div class="pw-guar">
+      <div class="pw-guar__seal" aria-hidden="true"><span>100%</span></div>
+      <div><p class="pw-guar__title">30-day money-back guarantee</p><p class="pw-guar__text">Get 100% of your money back if you don't see visible results after following your program.</p></div>
+    </div>
+  </section>
+
+  <p class="pw-footer">YouthGenom doesn't replace medical advice. Results vary. <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Subscription terms</a></p>
+</main>
+
+<div class="rd-cta-bar pw-sticky" id="sticky"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" data-cta2>Get my plan</button></div></div>
+
+<div class="rd-sheet-backdrop rd-hide" id="sdBack"></div>
+<div class="rd-sheet" id="sd" role="dialog" aria-modal="true" aria-labelledby="sdTitle">
+  <div class="rd-sheet__inner">
+    <div class="rd-sheet__grab"></div>
+    <div class="sd-head">
+      <svg class="sd-gift" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="12" y="31" width="40" height="26" rx="4" fill="#245a40"/><rect x="29" y="31" width="6" height="26" fill="#e8d6b8"/>
+        <g class="sd-gift__lid"><rect x="9" y="23" width="46" height="10" rx="3" fill="#1d4a34"/><rect x="29" y="23" width="6" height="10" fill="#e8d6b8"/>
+          <path d="M32 23c-3-7-12-9-12-3 0 3 6 3 12 3z" fill="#d4b48a"/><path d="M32 23c3-7 12-9 12-3 0 3-6 3-12 3z" fill="#d4b48a"/><circle cx="32" cy="22" r="2.6" fill="#c9a375"/></g>
+        <path class="sd-gift__spark" d="M13 10l1.6 3.4L18 15l-3.4 1.6L13 20l-1.6-3.4L8 15l3.4-1.6z" fill="#d4b48a"/>
+        <path class="sd-gift__spark" d="M52 6l1.2 2.6L56 10l-2.8 1.2L52 14l-1.2-2.8L48 10l2.8-1.4z" fill="#245a40"/>
+        <path class="sd-gift__spark" d="M58 22l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" fill="#8e3418"/>
+      </svg>
+      <div><span class="sd-pill">Extra discount</span><p class="sd-title" id="sdTitle">80% off your 6-month plan</p></div>
+    </div>
+    <div class="sd-price">
+      <div><s>$0.21</s><b>$0.18</b><span>per day</span></div>
+      <p>$30.00 today instead of $36.00</p>
+    </div>
+    <p class="sd-note">Reserved for you while your discount timer runs.</p>
+    <button class="rd-cta" type="button" id="sdYes">Apply 80% discount</button>
+    <button class="rd-link-btn" type="button" id="sdNo">No thanks</button>
+  </div>
+</div>
+
+<script>
+  RD.header("26-basic-plan-selection");
+  var s = RD.load(), p = RD.projection(s), mo = RD.MOTIVES[s.motive] || RD.MOTIVES.both, st = RD.STAGES[s.stage] || RD.STAGES.postmenopause;
+  var PRICES = {
+    std:   { pct: 75, plans: { m6: [144.00, 36.00, 75], m3: [57.96, 28.92, 50], m1: [44.00, 22.00, 50] } },
+    super: { pct: 80, plans: { m6: [144.00, 30.00, 80], m3: [57.96, 24.00, 59], m1: [44.00, 18.00, 59] } },
+    // When the timer reaches zero the discount really ends: regular prices, no tags, no pop-up (honest timer, R-39).
+    none:  { pct: 0,  plans: { m6: [144.00, 144.00, 0], m3: [57.96, 57.96, 0], m1: [44.00, 44.00, 0] } }
+  };
+  var GIFT = '<span class="pw-gift__book" aria-hidden="true"><span>RECIPE<br>GUIDE</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10z"/><path d="M2 21c0-3 1.9-5.4 5.3-6.1"/></svg></span>       <p><b>Menopause Recipe Guide</b><span data-gift-text></span></p>';
+  var META = { m6: { name: "6-month plan", days: 168, label: "every 6 months" }, m3: { name: "3-month plan", days: 84, label: "every 3 months" }, m1: { name: "1-month plan", days: 28, label: "every month" } };
+  // Prototype only: ?reset-timer starts a fresh 10-minute reservation for demos (real users can't reset it, R-39).
+  // It also clears the extra discount she may have taken and lets the pop-up show again.
+  if (/[?&]reset-timer\b/.test(location.search)) {
+    try { localStorage.removeItem("yg_rd_deadline"); sessionStorage.removeItem("yg_rd_sd"); } catch (e) {}
+    RD.save({ superDiscount: false }); s.superDiscount = false;
+    history.replaceState(null, "", location.pathname);
+  }
+  var tier = s.superDiscount ? "super" : "std", selected = s.plan || "m6";
+
+  document.getElementById("now").textContent = RD.fmtW(p.from, s.unit);
+  document.getElementById("after").textContent = RD.fmtW(p.to, s.unit);
+  // Difference between now and the goal, in her units.
+  document.getElementById("diff").textContent = "−" + (s.unit === "metric" ? Math.round(RD.kg(p.from) - RD.kg(p.to)) + " kg" : Math.round(p.from - p.to) + " lbs");
+  document.getElementById("why6").textContent = p.months <= 6
+    ? "Your goal takes about " + p.months + (p.months === 1 ? " month" : " months") + ". The 6-month plan covers it, with time to keep the weight off."
+    : "The 6-month plan gets you most of the way, at the lowest price per day.";
+  // Headline follows why she wants to lose weight (step 2, R-31), in two lines at 375 px; the live headline when the answer is missing.
+  var HEADLINES = {
+    health: "Lose weight for better health",
+    looks: "Lose weight and feel like yourself again",
+    both: "Lose weight for more energy and confidence"
+  };
+  document.getElementById("headline").textContent = HEADLINES[s.motive] || "Get your personal weight loss program";
+  // Reviews: the weight lost in the units she chose at the start.
+  document.querySelectorAll("[data-lbs]").forEach(function (el) { el.textContent = "−" + RD.fmtW(+el.dataset.lbs, s.unit); }); // same numbers as step 8
+
+  function money(n) { return "$" + n.toFixed(2); }
+  function render() {
+    var t = PRICES[tier];
+    document.querySelectorAll("[data-plans]").forEach(function (box) {
+      box.innerHTML = ["m6", "m3", "m1"].map(function (k) { // 6-month first and pre-selected, as on the live funnel
+        var v = t.plans[k], perDay = v[1] / META[k].days, oldDay = v[0] / META[k].days, pop = k === "m6";
+        var off = v[2] > 0; // no discount once the timer has ended
+        return '<button type="button" class="pw-plan" role="radio" data-plan="' + k + '" aria-checked="' + (k === selected) + '">' +
+          (pop ? '<span class="pw-plan__badge">MOST POPULAR</span>' : "") +
+          '<span class="pw-plan__radio" aria-hidden="true"></span>' +
+          // A saving on each plan (R-27): solid on the chosen plan, quiet on the others (R-40).
+          '<span class="pw-plan__main"><span class="pw-plan__name">' + META[k].name + (off ? '<span class="pw-plan__save">−' + v[2] + '%</span>' : "") + "</span>" +
+          '<span class="pw-plan__total">' + (off ? "<s>" + money(v[0]) + "</s>" : "") + money(v[1]) + " " + META[k].label + "</span></span>" +
+          '<span class="pw-plan__day">' + (off ? "<s>" + money(oldDay) + "</s>" : "") + "<b>" + money(perDay) + "</b><span>per day</span></span></button>" +
+          // The Recipe Guide is the 6-month plan's bonus, joined to that card with a "+" (A2; the email bonus is the starter menu).
+          // With another plan chosen it stays visible but dimmed, with a way back to the 6-month plan.
+          (k === "m6" ? '<div class="pw-gift' + (selected === "m6" ? "" : " is-off") + '"><span class="pw-gift__plus" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1.5v9M1.5 6h9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>' + GIFT + "</div>" : "");
+      }).join("");
+    });
+    document.querySelectorAll("[data-gift-text]").forEach(function (el) {
+      el.innerHTML = selected === "m6"
+        ? "Free bonus: a printable book of menopause-friendly recipes. Yours to keep."
+        : 'Free with the 6-month plan only.<br><button type="button" class="pw-gift__switch" data-to6>Switch to the 6-month plan</button>';
+    });
+    function pick(k) { selected = k; RD.save({ plan: selected }); render(); }
+    document.querySelectorAll(".pw-plan").forEach(function (b) { b.onclick = function () { pick(b.dataset.plan); }; });
+    document.querySelectorAll("[data-to6]").forEach(function (b) { b.onclick = function () { var box = b.closest(".pw-plans"); pick("m6"); box.querySelector('[data-plan="m6"]').focus(); }; });
+    var v = t.plans[selected];
+    document.getElementById("terms").textContent = "Today " + money(v[1]) + " for the " + META[selected].name + ". Renews " + META[selected].label + " at the regular price unless you cancel. Cancel anytime in your account.";
+
+    var dealPct = document.getElementById("dealPct"); if (dealPct) dealPct.textContent = t.pct + "%"; // gone once the timer has ended
+    var nm = s.name ? s.name + ", your" : "Your";
+    if (tier !== "none") document.getElementById("strip").innerHTML = nm + " <em>" + t.pct + "% discount</em> is reserved";
+  }
+  render();
+
+  RD.timer(document.getElementById("time"), 10,
+    function () {
+      document.getElementById("dealText").textContent = "Discount time is up"; document.getElementById("deal").classList.add("is-over");
+      document.getElementById("strip").textContent = (s.name ? s.name + ", your" : "Your") + " plan is still ready for you";
+      tier = "none"; render(); if (sd) closeSheet(); // the discount ends with the timer (sd is set later in this script)
+    },
+    function (m, sec) {
+      document.getElementById("mm").textContent = (m < 10 ? "0" : "") + m; document.getElementById("ss").textContent = (sec < 10 ? "0" : "") + sec;
+      document.getElementById("runout").style.width = Math.max(0, (m * 60 + sec) / 600 * 100) + "%"; // 10-minute reservation
+    });
+  document.getElementById("dealBtn").onclick = function () { document.getElementById("plans").scrollIntoView({ behavior: "smooth", block: "start" }); };
+
+  // Two copies of the required checkbox (R-38), one in each plan panel, always in sync.
+  var agrees = document.querySelectorAll("[data-agree]"), msgs = document.querySelectorAll(".pw-agree-msg");
+  agrees.forEach(function (c) { c.onchange = function () { agrees.forEach(function (o) { o.checked = c.checked; }); msgs.forEach(function (m) { m.classList.remove("is-visible"); }); }; });
+  function go(btn) {
+    if (!agrees[0].checked) {
+      // The checkbox in the panel she pressed, or (sticky button) the one closest to the screen centre.
+      var mid = window.innerHeight / 2, box = btn.closest(".pw-panel") ? btn.closest(".pw-panel").querySelector("[data-agree]") : null;
+      if (!box) box = Array.prototype.slice.call(agrees).sort(function (a, b) { return Math.abs(a.getBoundingClientRect().top - mid) - Math.abs(b.getBoundingClientRect().top - mid); })[0];
+      box.closest(".pw-agree").nextElementSibling.classList.add("is-visible");
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    RD.save({ plan: selected }); RD.next("26-basic-plan-selection");
+  }
+  document.querySelectorAll("#cta, [data-cta2]").forEach(function (b) { b.onclick = function () { go(b); }; });
+
+  var sticky = document.getElementById("sticky");
+  // Sticky button only between the first and the last "Get my plan", so two buttons never show at once.
+  var ctaTop = document.getElementById("cta"), ctaEnd = document.getElementById("ctaEnd");
+  function stickyCheck() {
+    var a = ctaTop.getBoundingClientRect(), b = ctaEnd.getBoundingClientRect(), vh = window.innerHeight;
+    sticky.classList.toggle("is-visible", a.bottom < 0 && b.top > vh - 90);
+  }
+  window.addEventListener("scroll", function () { requestAnimationFrame(stickyCheck); }, { passive: true });
+  window.addEventListener("resize", stickyCheck); stickyCheck();
+
+  // Swipe carousels with dots: reviews and the 3 steps.
+  function carousel(carId, dotsId, label) {
+    var car = document.getElementById(carId), dots = document.getElementById(dotsId), cards = car.children;
+    dots.innerHTML = Array.prototype.map.call(cards, function (c, i) { return '<button type="button" aria-label="' + label + " " + (i + 1) + '"></button>'; }).join("");
+    function active() { var i = Math.round(car.scrollLeft / (cards[0].offsetWidth + 12)); dots.querySelectorAll("button").forEach(function (b, j) { b.setAttribute("aria-current", j === i ? "true" : "false"); }); }
+    dots.querySelectorAll("button").forEach(function (b, i) { b.onclick = function () { car.scrollTo({ left: cards[i].offsetLeft - car.offsetLeft - (car.clientWidth - cards[i].offsetWidth) / 2, behavior: "smooth" }); }; });
+    car.addEventListener("scroll", function () { requestAnimationFrame(active); }); active();
+  }
+  carousel("car", "dots", "Story");
+  carousel("steps", "stepDots", "Step");
+
+  var sd = document.getElementById("sd"), back = document.getElementById("sdBack");
+  function closeSheet() { sd.classList.remove("is-open"); back.classList.remove("is-open"); setTimeout(function () { back.classList.add("rd-hide"); }, 250); }
+  function openSheet() {
+    if (tier !== "std" || sessionStorage.getItem("yg_rd_sd")) return; // not after the timer has ended
+    sessionStorage.setItem("yg_rd_sd", "1");
+    back.classList.remove("rd-hide"); requestAnimationFrame(function () { back.classList.add("is-open"); sd.classList.add("is-open"); });
+  }
+  new IntersectionObserver(function (e) { if (e[0].isIntersecting) setTimeout(openSheet, 1200); }, { threshold: .3 }).observe(document.getElementById("proof"));
+  document.getElementById("sdNo").onclick = closeSheet; back.onclick = closeSheet;
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSheet(); });
+  document.getElementById("sdYes").onclick = function () { tier = "super"; RD.save({ superDiscount: true }); render(); closeSheet(); document.getElementById("plans").scrollIntoView({ behavior: "smooth" }); };
+</script>
+</body>
+</html>

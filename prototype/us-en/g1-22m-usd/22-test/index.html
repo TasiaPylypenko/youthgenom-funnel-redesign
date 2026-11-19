@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your hormones and weight · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  .hm-chart { display: block; width: 100%; height: auto; }
+  .hm-chart text { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
+  .hm-legend { display: flex; gap: 16px; font-size: 13px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+  .hm-legend i { display: inline-block; width: 14px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .hm-title { font-size: 17px; font-weight: 800; margin: 0; }
+  .hm-sub { font-size: 14px; color: var(--muted); margin: 4px 0 14px; line-height: 1.45; }
+  .hm-src { font-size: 12px; color: var(--muted); margin: 10px 0 0; line-height: 1.45; }
+  .hm-you { font-size: 14px; color: var(--ink-2); margin: 12px 0 0; }
+</style>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <p class="rd-eyebrow">Your hormones</p>
+  <h1 class="rd-title">Why the same habits stop working in menopause</h1>
+
+  <div class="rd-card">
+    <p class="hm-title">How hormones change with age</p>
+    <p class="hm-sub">The dashed line marks the final period, at age 51 on average.</p>
+    <svg class="hm-chart" id="hm" viewBox="0 0 340 222" role="img" aria-label="Estrogen swings and then falls around the final period, at about age 51, and stays low after. Progesterone starts falling earlier, in the early 40s."></svg>
+    <div class="hm-legend"><span><i style="background:#245a40"></i>Estrogen</span><span><i style="background:#8c6239"></i>Progesterone</span></div>
+  </div>
+
+  <!-- Evidence for the "fat and muscle" claim: SWAN body-composition analysis (Greendale et al., JCI Insight, 2019). -->
+  <div class="rd-info">
+    <b>What research shows</b>
+    In the SWAN study of more than 1,200 women, fat gain doubled in speed about 2 years before the final period, and muscle started to decline at the same time.
+  </div>
+
+  <section class="rd-section">
+    <ul class="rd-list">
+      <li><span class="rd-list__dot"><b style="font-size:12px;color:#fff">1</b></span><span><b>Less estrogen moves fat to the belly,</b> even if you eat the same.</span></li>
+      <li><span class="rd-list__dot"><b style="font-size:12px;color:#fff">2</b></span><span><b>Muscle drops,</b> so your body burns less at rest.</span></li>
+      <li><span class="rd-list__dot"><b style="font-size:12px;color:#fff">3</b></span><span><b>Sleep and stress hit harder,</b> and cravings follow.</span></li>
+    </ul>
+    <p class="hm-you">Your plan works with these changes, not against them.</p>
+    <p class="hm-src">Hormone curves are a simplified illustration of average levels, staged by STRAW+10. Body-composition data: SWAN (Greendale et al., 2019). Not your personal data.</p>
+  </section>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta">Continue</button></div></div>
+<script>
+  RD.header("22-test");
+  (function () {
+    // Plot: age 40–60 on x; hormone level 0–1 on y. Curves follow the shape of published average trends:
+    // estrogen steady, then wider swings in perimenopause, a steep fall around the final period (avg. age 51), low after;
+    // progesterone falls earlier, from the early 40s.
+    var X0 = 30, X1 = 326, Y0 = 30, Y1 = 158, A0 = 40, A1 = 60;
+    function x(a) { return X0 + (a - A0) / (A1 - A0) * (X1 - X0); }
+    function y(v) { return Y1 - Math.max(0, Math.min(1, v)) * (Y1 - Y0); }
+    function ss(e0, e1, t) { t = Math.max(0, Math.min(1, (t - e0) / (e1 - e0))); return t * t * (3 - 2 * t); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function estrogen(a) {
+      var base = a < 50 ? lerp(0.8, 0.62, ss(44, 50, a)) : lerp(0.62, 0.14, ss(50, 52.5, a));
+      var amp = a < 50 ? lerp(0.012, 0.17, ss(44, 49.6, a)) : lerp(0.17, 0.01, ss(50, 51.6, a));
+      var t = a - 40; // two mixed waves: irregular swings, as in measured cycles
+      return base + amp * (0.65 * Math.sin(2 * Math.PI * t / 0.95) + 0.45 * Math.sin(2 * Math.PI * t / 0.57 + 1.3));
+    }
+    function progesterone(a) {
+      return lerp(0.6, 0.06, ss(41.5, 50.5, a)) + lerp(0.012, 0.03, ss(42, 47, a)) * (1 - ss(49, 51, a)) * Math.sin(2 * Math.PI * (a - 40) / 1.1);
+    }
+    function path(f) { var d = ""; for (var a = A0; a <= A1 + 1e-9; a += 0.05) d += (d ? "L" : "M") + x(a).toFixed(1) + " " + y(f(a)).toFixed(1); return d; }
+
+    var stages = [{ name: "Before", a: 40, b: 45 }, { name: "Perimenopause", a: 45, b: 51 }, { name: "Postmenopause", a: 51, b: 60 }];
+    var bands = { perimenopause: [45, 51], menopause: [49.5, 53], postmenopause: [51, 60] };
+    var s = RD.load(), you = bands[s.stage];
+
+    var h = "";
+    // stage bands
+    stages.forEach(function (st, i) { h += '<rect x="' + x(st.a) + '" y="' + Y0 + '" width="' + (x(st.b) - x(st.a)) + '" height="' + (Y1 - Y0) + '" fill="' + (i % 2 ? "#f4f8f5" : "#fbfcfb") + '"/>'; });
+    if (you) {
+      // Peri and menopause: the label sits centred over the dashed final-period line. Postmenopause: over her band.
+      var cx = s.stage === "postmenopause" ? (x(you[0]) + x(you[1])) / 2 : x(51);
+      h += '<rect x="' + x(you[0]) + '" y="' + Y0 + '" width="' + (x(you[1]) - x(you[0])) + '" height="' + (Y1 - Y0) + '" fill="#e2efe5"/>';
+      h += '<rect id="hm-pill" x="' + (cx - 44) + '" y="2" width="88" height="20" rx="10" fill="#1f2622"/><text id="hm-pilltext" x="' + cx + '" y="16" font-size="10.5" font-weight="800" fill="#fff" text-anchor="middle">YOU ARE HERE</text>';
+    }
+    // axes and age ticks
+    h += '<g stroke="#8a8f8b" stroke-width="1"><line x1="' + X0 + '" x2="' + X0 + '" y1="' + Y0 + '" y2="' + Y1 + '"/><line x1="' + X0 + '" x2="' + X1 + '" y1="' + Y1 + '" y2="' + Y1 + '"/></g>';
+    h += '<g font-size="11" fill="#4a4f4b" text-anchor="middle">';
+    [40, 45, 50, 55, 60].forEach(function (a) { h += '<line x1="' + x(a) + '" x2="' + x(a) + '" y1="' + Y1 + '" y2="' + (Y1 + 4) + '" stroke="#8a8f8b"/><text x="' + x(a) + '" y="' + (Y1 + 16) + '">' + a + "</text>"; });
+    h += '</g><text x="' + X1 + '" y="' + (Y1 + 30) + '" font-size="10" fill="#4a4f4b" text-anchor="end">AGE</text>';
+    h += '<text transform="translate(14 ' + ((Y0 + Y1) / 2) + ') rotate(-90)" font-size="10" fill="#4a4f4b" text-anchor="middle" letter-spacing=".04em">HORMONE LEVEL</text>';
+    // stage names
+    h += '<g font-size="11" font-weight="700" fill="#1f2622" text-anchor="middle">';
+    stages.forEach(function (st) { h += '<text x="' + (x(st.a) + x(st.b)) / 2 + '" y="' + (Y1 + 46) + '">' + st.name + "</text>"; });
+    h += "</g>";
+    // final period marker
+    // When the label sits over the line, the line runs up to touch it.
+    var lineTop = you && s.stage !== "postmenopause" ? 22 : Y0;
+    h += '<line x1="' + x(51) + '" x2="' + x(51) + '" y1="' + lineTop + '" y2="' + Y1 + '" stroke="#1f2622" stroke-width="1.2" stroke-dasharray="3 3"/>';
+    // curves
+    h += '<path d="' + path(progesterone) + '" fill="none" stroke="#8c6239" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    h += '<path d="' + path(estrogen) + '" fill="none" stroke="#245a40" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>';
+    document.getElementById("hm").innerHTML = h;
+    // Fit the pill to its text, whatever font the phone uses, and keep it inside the chart.
+    var pt = document.getElementById("hm-pilltext"), pr = document.getElementById("hm-pill");
+    if (pt) { var w = pt.getBBox().width + 22, px = Math.max(X0, Math.min(X1 - w, cx - w / 2)); pr.setAttribute("width", w); pr.setAttribute("x", px); pt.setAttribute("x", px + w / 2); }
+  })();
+  document.getElementById("cta").onclick = function () { RD.next("22-test"); };
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>2 million plans · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  /* Social proof right after the first tap (§6.3), as its own screen like the reference.
+     Light background with a soft gradient; the text sits on a clean area below the photo. */
+  body { background: var(--bg); }
+  .pf { position: relative; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: calc(var(--cta-h) + 40px);
+        background: radial-gradient(110% 60% at 50% 30%, #eef4ef 0%, #f3efe6 55%, var(--bg) 100%); }
+  .pf .rd-header { justify-content: center; }
+  .pf-photo { position: relative; flex: 1; min-height: 360px; margin: 4px calc(-1 * var(--gutter)) 0; overflow: hidden; }
+  /* Photo sits on the bottom of its area and fades out softly, so cropped photos have no hard edge. */
+  .pf-photo img { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 118%; max-width: none; height: 100%; object-fit: contain; object-position: center bottom;
+                  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); }
+  .pf-photo::after { content: ""; position: absolute; inset: auto 0 0 0; height: 30%; background: linear-gradient(to bottom, rgba(247,245,240,0), var(--bg) 92%); }
+  .pf-claim { position: relative; z-index: 2; text-align: center; background: var(--bg); padding-top: 4px; }
+  /* The number in brown (green is kept for actions), the caption as calm sentence-case text. */
+  .pf-big { font-family: var(--serif); font-size: 54px; line-height: 1; margin: 0; color: var(--brown); letter-spacing: -.01em; }
+  .pf-cap { font-size: 18px; line-height: 1.4; margin: 10px auto 0; max-width: 300px; color: var(--ink); text-wrap: balance; }
+  .pf-cap b { font-weight: 700; }
+</style>
+</head>
+<body>
+<main class="page pf">
+  <div data-rd-header></div>
+  <div class="pf-photo" aria-hidden="true"><img id="photo" src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/proof-group-50plus.webp" alt=""></div>
+  <div class="pf-claim">
+    <p class="pf-big">2,000,000+</p>
+    <p class="pf-cap">personalised plans created with <b>our method</b></p>
+  </div>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta">Continue</button></div></div>
+<script>
+  RD.header("0b-proof", { noBack: true });
+  // For comparing photos in the prototype: ?photo=close (previous close-up) or ?photo=old (full-length group).
+  var alt = (location.search.match(/[?&]photo=(close|old)\b/) || [])[1];
+  if (alt) document.getElementById("photo").src = "/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/" + (alt === "old" ? "proof-group-green.webp" : "proof-group-close.webp");
+  document.getElementById("cta").onclick = function () { RD.next("0b-proof"); };
+</script>
+</body>
+</html>

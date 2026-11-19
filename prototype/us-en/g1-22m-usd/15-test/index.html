@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your weight · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <h1 class="rd-title">What's your current weight?</h1>
+  <p class="rd-sub">It's the starting point for your plan. Only you and your dietitian see it.</p>
+
+  <div class="rd-field">
+    <label class="rd-label" for="w">Current weight</label>
+    <div class="rd-input-wrap" id="wrap"><input class="rd-input" id="w" type="text" inputmode="decimal" maxlength="5" autocomplete="off" aria-describedby="err bmi"><span class="rd-unit" id="u">lbs</span></div>
+    <p class="rd-error" id="err" role="alert">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>
+      <span id="errText"></span>
+    </p>
+    <!-- BMI card under the field, like the reference (R-22, user's decision 2026-11-18). -->
+    <div class="rd-bmi" id="bmi" hidden aria-live="polite">
+      <div class="rd-bmihead"><p class="rd-bmihead__title">Your BMI</p><span class="rd-badge" id="bmiBadge"></span></div>
+      <div id="bmiScale"></div>
+      <div id="bmiMsg"></div>
+      <button class="rd-link" type="button" id="aboutBtn" aria-expanded="false" aria-controls="about">About Body Mass Index (BMI)</button>
+      <div class="rd-about" id="about" hidden></div>
+    </div>
+  </div>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta" disabled>Continue</button></div></div>
+<script>
+  RD.header("15-test");
+  var s = RD.load(), metric = s.unit === "metric";
+  var input = document.getElementById("w"), wrap = document.getElementById("wrap"), err = document.getElementById("err"), cta = document.getElementById("cta");
+  var min = metric ? 35 : 80, max = metric ? 250 : 550;
+  document.getElementById("u").textContent = metric ? "kg" : "lbs";
+  input.placeholder = metric ? "e.g. 80" : "e.g. 180";
+  document.getElementById("errText").textContent = "Weight must be between 80 and 550 lbs (35–250 kg).";
+  if (s.weightLbs) input.value = metric ? RD.kg(s.weightLbs) : s.weightLbs;
+
+  function lbs(v) { return metric ? RD.lbsFromKg(+v) : +v; }
+  function update(showError) {
+    var v = input.value.trim().replace(",", "."), ok = /^\d+(\.\d)?$/.test(v) && +v >= min && +v <= max;
+    cta.disabled = !ok;
+    var bad = v !== "" && !ok && (showError || v.length >= 3);
+    wrap.classList.toggle("is-error", bad); wrap.classList.toggle("is-valid", ok); err.classList.toggle("is-visible", bad);
+    var b = ok ? RD.bmi(lbs(v), RD.heightInches(s)) : null;
+    document.getElementById("bmi").hidden = !b;
+    if (b) { var i = RD.bmiInfo(b), badge = document.getElementById("bmiBadge"); badge.textContent = i.badge; badge.className = "rd-badge rd-badge--" + i.cls; document.getElementById("bmiScale").innerHTML = RD.bmiScale(b); document.getElementById("bmiMsg").innerHTML = RD.bmiMsg(b); }
+  }
+  input.addEventListener("input", function () { update(false); });
+  input.addEventListener("blur", function () { update(true); });
+  cta.onclick = function () { RD.save({ weightLbs: lbs(input.value.trim().replace(",", ".")), targetLbs: null }); RD.next("15-test"); };
+  RD.bmiAbout(document.getElementById("aboutBtn"), document.getElementById("about"));
+  update(false);
+</script>
+</body>
+</html>

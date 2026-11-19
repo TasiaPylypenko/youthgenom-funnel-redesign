@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Creating your plan · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  /* Loader: soft blurred blobs in the brand colours float around the centre and slowly merge as the plan
+     is built. At 100% they become one green circle with a check, and the plan is revealed. */
+  .ld-title { text-align: center; margin-top: 12px; }
+  main.page { padding-bottom: 180px; } /* room for the users line + button */
+  .ld-orb { position: relative; width: 290px; height: 290px; margin: 36px auto 0; transition: height .6s cubic-bezier(.4,0,.2,1), margin .6s cubic-bezier(.4,0,.2,1); }
+  .ld-blobs { position: absolute; inset: 0; transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1); }
+  .ld-blob { position: absolute; left: 50%; top: 50%; border-radius: 50%; filter: blur(22px); opacity: .82; will-change: transform; }
+  .ld-core { position: absolute; left: 50%; top: 50%; width: 80px; height: 80px; margin: -40px 0 0 -40px; border-radius: 50%; background: var(--green-700); color: #fff;
+             display: grid; place-items: center; transform: scale(0); opacity: 0; box-shadow: 0 6px 24px rgba(36,90,64,.35);
+             transition: transform .55s cubic-bezier(.34,1.56,.64,1), opacity .3s ease; }
+  .ld-core path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .4s ease .35s; }
+  .is-merged .ld-blobs { opacity: 0; transform: scale(.4); }
+  .is-merged .ld-core { transform: scale(1); opacity: 1; }
+  .is-merged .ld-core path { stroke-dashoffset: 0; }
+  .is-ready .ld-orb { height: 76px; margin-top: 24px; }
+  .is-ready .ld-core { transform: scale(.72); }
+  .ld-status { text-align: center; margin: 36px 0 0; min-height: 84px; }
+  /* The percentage is the main number here: large, in the heading font; the step line sits under it. */
+  .ld-pct { font-family: var(--serif); font-size: 48px; line-height: 1; color: var(--ink); margin: 0; font-variant-numeric: tabular-nums; }
+  .ld-step { font-size: 16px; color: var(--muted); margin: 10px 0 0; transition: opacity .3s ease; }
+  .is-ready .ld-status { display: none; }
+
+  .ld-ready { display: none; margin-top: 32px; opacity: 0; transition: opacity .5s ease .1s; }
+  .is-ready .ld-ready { display: block; }
+  .is-shown .ld-ready { opacity: 1; }
+  /* "Your plan includes": a goal tile and four tiles built from her answers. Flat tinted tiles (no white cards
+     with shadows), so they read as content, not as answers to tap. */
+  .pr-eyebrow { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); margin: 0 0 12px; }
+  .pr-goal { background: #e8d6b8; color: #1f2622; border-radius: var(--radius); padding: 14px 16px; } /* deeper sand: stands out from the tiles without shouting */
+  .pr-goal__k { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin: 0; color: #3d3a33; }
+  .pr-goal__v { font-family: var(--serif); font-size: 32px; line-height: 1.1; margin: 2px 0; color: var(--brown); }
+  .pr-goal__s { font-size: 15px; margin: 0; color: #3d3a33; }
+  .pr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .pr-tile { background: var(--sand-100); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .pr-ic { width: 42px; height: 38px; background: var(--surface); color: var(--brown); display: grid; place-items: center; } /* shape: .rd-pebble */
+  .pr-t { font-weight: 700; font-size: 15px; margin: 0; line-height: 1.3; }
+  .pr-s { font-size: 13px; color: var(--muted); margin: 2px 0 0; line-height: 1.3; }
+  /* Social proof sits just above the button. */
+  .ld-proof { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 22px; }
+  .ld-proof p { margin: 0; font-size: 15px; color: var(--muted); }
+  .ld-proof b { color: var(--ink); }
+</style>
+</head>
+<body>
+<main class="page" id="page">
+  <div data-rd-header></div>
+  <h1 class="rd-title ld-title" id="title" aria-live="polite">Creating your personalised plan</h1>
+
+  <div class="ld-orb" aria-hidden="true">
+    <div class="ld-blobs" id="blobs"></div>
+    <div class="ld-core"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+  </div>
+
+  <div class="ld-status" role="status">
+    <p class="ld-pct" id="pct">0%</p>
+    <p class="ld-step" id="step">Analysing your answers</p>
+  </div>
+
+  <div class="ld-ready">
+    <p class="pr-eyebrow">Your plan includes</p>
+    <div class="pr-goal">
+      <p class="pr-goal__k">Your goal</p>
+      <p class="pr-goal__v" id="goal"></p>
+      <p class="pr-goal__s" id="goalSub"></p>
+    </div>
+    <div class="pr-grid" id="plan"></div>
+  </div>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><div class="ld-proof"> <div class="rd-avatars" aria-hidden="true"> <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/QK4f1R2M0O-375.webp" alt=""><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/FfGBFi2YHe-375.webp" alt=""><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/WaUsL4Q8JV-375.webp" alt=""> </div> <p><b>2M+</b> personalised plans created</p> </div><button class="rd-cta" type="button" id="cta" disabled>Creating your plan…</button></div></div>
+<script>
+  RD.header("25b-plan-ready");
+  var s = RD.load(), p = RD.projection(s), st = RD.STAGES[s.stage] || RD.STAGES.postmenopause, mo = RD.MOTIVES[s.motive] || RD.MOTIVES.both;
+  function ic(path) { return '<span class="pr-ic rd-pebble" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' + path + "</svg></span>"; }
+  var IC = {
+    goal: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+    meal: '<path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3"/><path d="M17 21V3c-2 1-3.5 3.5-3.5 7s1.5 4 3.5 4"/>',
+    snack: '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="14.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/><circle cx="10" cy="15.5" r="1" fill="currentColor"/>',
+    move: '<rect x="4.5" y="6" width="3.5" height="12" rx="1.2"/><rect x="16" y="6" width="3.5" height="12" rx="1.2"/><path d="M2 10v4M22 10v4M8 12h8"/>',
+    check: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 12.5l2 2 4-4"/>'
+  };
+  function tile(icon, t, sub) { return '<div class="pr-tile">' + ic(icon) + '<div><p class="pr-t">' + t + '</p><p class="pr-s">' + sub + "</p></div></div>"; }
+  function list(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  var ans = s.answers || {};
+  var stageWord = { perimenopause: "perimenopause", menopause: "menopause", postmenopause: "postmenopause" }[s.stage] || "your stage of menopause";
+  var ALLERGEN = { milk: "milk", eggs: "eggs", fish: "fish", shellfish: "shellfish", treenuts: "tree nuts", peanuts: "peanuts", wheat: "wheat", soy: "soy", sesame: "sesame" };
+  var allergens = ((ans["4-test"] || {}).values || []).map(function (v) { return ALLERGEN[v]; }).filter(Boolean);
+  var mealSub = allergens.length ? "Without " + list(allergens.slice(0, 3)) + (allergens.length > 3 ? " and more" : "") : "Easy everyday recipes";
+  // Snack triggers as plain moments: "When you're stressed or bored", "When food is around".
+  var FEEL = { "Stress": "stressed", "Boredom": "bored", "Hunger": "hungry" }, WHEN = { "Food around me": "when food is around", "Other people snacking": "when others snack" };
+  var trig = (s.triggers || []).filter(function (t) { return FEEL[t] || WHEN[t]; }).slice(0, 2);
+  function moments(tr) {
+    var feels = tr.filter(function (t) { return FEEL[t]; }).map(function (t) { return FEEL[t]; }), whens = tr.filter(function (t) { return WHEN[t]; }).map(function (t) { return WHEN[t]; });
+    var parts = (feels.length ? ["when you're " + feels.join(" or ")] : []).concat(whens), txt = parts.join(" or ");
+    return txt.charAt(0).toUpperCase() + txt.slice(1);
+  }
+  var ex = ((ans["6-test"] || {}).values || [])[0];
+  var move = ex === "none" ? ["Gentle workouts", "At home, no equipment"]
+    : ex === "walk" ? ["Walking workouts", "Builds on what you do"]
+    : ["Strength workouts", "To protect muscle as estrogen drops"];
+  document.getElementById("goal").textContent = RD.fmtW(p.to, s.unit);
+  document.getElementById("goalSub").textContent = "by " + RD.fmtDate(p.end) + " · " + (s.unit === "metric" ? "about 0.5–1 kg a week" : "about 1–2 lbs a week");
+  document.getElementById("plan").innerHTML =
+    tile(IC.meal, "Meals for " + stageWord, mealSub) +
+    (trig.length ? tile(IC.snack, "Snacks for cravings", moments(trig)) : tile(IC.snack, "A steady meal rhythm", "So hunger doesn't build up")) +
+    tile(IC.move, move[0], move[1]) +
+    tile(IC.check, "Dietitian review", "Adjusts as your body responds");
+
+  var page = document.getElementById("page"), cta = document.getElementById("cta"), stepEl = document.getElementById("step"), pctEl = document.getElementById("pct");
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var STEPS = ["Analysing your answers", "Matching meals to your stage", "Choosing workouts for your level", "Setting up your dietitian review"];
+  var DURATION = reduce ? 2400 : 7000;
+
+  // Blobs: colour, size, start angle, orbit speed, orbit shape. Brand palette: sand, tan, sage, green, warm peach.
+  var BLOBS = [
+    { c: "#e6c99c", d: 180, a: 0.0, w: 0.55, ex: 1.0, ey: 0.8 },
+    { c: "#a9c8b4", d: 168, a: 1.3, w: -0.48, ex: 0.9, ey: 1.0 },
+    { c: "#6fa585", d: 146, a: 2.6, w: 0.62, ex: 1.0, ey: 0.9 },
+    { c: "#efb79c", d: 134, a: 3.9, w: -0.58, ex: 0.85, ey: 1.0 },
+    { c: "#d4b48a", d: 122, a: 5.1, w: 0.7, ex: 1.0, ey: 0.85 }
+  ];
+  var holder = document.getElementById("blobs");
+  var els = BLOBS.map(function (b) {
+    var el = document.createElement("span"); el.className = "ld-blob";
+    el.style.width = el.style.height = b.d + "px"; el.style.margin = (-b.d / 2) + "px 0 0 " + (-b.d / 2) + "px"; el.style.background = b.c;
+    holder.appendChild(el); return el;
+  });
+
+  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  // Progress isn't linear: it eases and pauses a little between steps, like real work.
+  function progressAt(t) { var x = Math.min(1, t / DURATION); return ease(x) * 0.6 + x * 0.4; }
+
+  var t0 = null, lastStep = -1, finished = false;
+  function frame(now) {
+    if (t0 === null) t0 = now;
+    var t = now - t0, pr = Math.min(1, progressAt(t)), m = ease(pr), sec = t / 1000;
+    els.forEach(function (el, i) {
+      var b = BLOBS[i], R = reduce ? 36 * (1 - m) : 74 * (1 - m) + 2, ang = b.a + (reduce ? 0 : b.w * sec * 1.6);
+      var wob = reduce ? 0 : 9 * (1 - m) * Math.sin(sec * 1.9 + i);
+      var x = Math.cos(ang) * R * b.ex + wob, y = Math.sin(ang) * R * b.ey + wob * 0.6, sc = 1 - 0.35 * m;
+      el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) scale(" + sc.toFixed(3) + ")";
+    });
+    var k = Math.min(STEPS.length - 1, Math.floor(pr * STEPS.length));
+    if (k !== lastStep) {
+      lastStep = k; stepEl.style.opacity = 0;
+      setTimeout(function () { stepEl.textContent = STEPS[k]; stepEl.style.opacity = 1; }, 150);
+    }
+    pctEl.textContent = Math.round(pr * 100) + "%";
+    if (pr >= 1 && !finished) { finished = true; return done(); }
+    requestAnimationFrame(frame);
+  }
+  function done() {
+    page.classList.add("is-merged");
+    setTimeout(function () {
+      page.classList.add("is-ready");
+      document.getElementById("title").textContent = (s.name ? s.name + ", your" : "Your") + " plan is ready!";
+      cta.disabled = false; cta.textContent = "See my plan";
+      requestAnimationFrame(function () { page.classList.add("is-shown"); });
+    }, reduce ? 300 : 900);
+  }
+  cta.onclick = function () { RD.next("25b-plan-ready"); };
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

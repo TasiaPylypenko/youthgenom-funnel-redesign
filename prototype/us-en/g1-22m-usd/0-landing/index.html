@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your menopause weight plan · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  /* Layout like the reference: title on top, the photo is part of the screen, the question sits over its lower part. */
+  .lp { position: relative; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: 20px; overflow: hidden; }
+  .lp-top { position: relative; z-index: 2; text-align: center; }
+  .lp-top .rd-header { justify-content: space-between; } /* logo centred between the spacer and the profile button */
+  .lp-title { font-family: var(--serif); font-size: 30px; line-height: 1.18; margin: 6px 0 8px; text-wrap: balance; }
+  .lp-title em { font-style: normal; color: var(--green-700); }
+  .lp-sub { font-size: 16px; color: var(--muted); margin: 0 auto; max-width: 320px; }
+  .lp-photo { position: relative; flex: 1; min-height: 250px; margin: 12px calc(-1 * var(--gutter)) 0; overflow: hidden; }
+  .lp-photo img { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); height: 100%; width: auto; max-width: none; }
+  .lp-photo::after { content: ""; position: absolute; inset: auto 0 0 0; height: 55%; background: linear-gradient(to bottom, rgba(247,245,240,0), var(--bg) 85%); }
+  .lp-q { position: relative; z-index: 2; margin-top: -110px; }
+  .lp-lead { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--green-700); margin: 0 0 4px; }
+  .lp-ask { text-align: center; font-size: 20px; font-weight: 800; margin: 0 0 14px; }
+  .lp-tiles { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+  /* Radio on the same line as the title, hint below: compact, square-ish tiles. */
+  .lp-tiles .rd-option--tile { display: grid; grid-template-columns: 1fr 24px; grid-template-areas: "label check" "hint hint"; column-gap: 8px; row-gap: 4px; align-items: center; align-content: start; min-height: 84px; padding: 12px; text-align: left; }
+  .lp-tiles .rd-option--tile .rd-option__check { position: static; grid-area: check; }
+  .lp-tiles .rd-option--tile .rd-option__label { grid-area: label; padding-right: 0; font-size: 15px; letter-spacing: -.01em; }
+  .lp-tiles .rd-option--tile .rd-option__hint { grid-area: hint; margin-top: 0; }
+  .lp-legal { font-size: 12px; color: var(--muted); text-align: center; margin: 16px 0 0; line-height: 1.45; }
+</style>
+</head>
+<body>
+<main class="page page--no-cta lp">
+  <div class="lp-top">
+    <div data-rd-header></div>
+    <!-- Value and audience before the question (R-04). -->
+    <h1 class="lp-title">Menopause changed your body. <em>Your plan should change too.</em></h1>
+    <p class="lp-sub">A weight plan built and reviewed by certified dietitians, for women 50+.</p>
+  </div>
+
+  <div class="lp-photo" aria-hidden="true"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/MpRPoC-Ds6-1068.webp" alt=""></div>
+
+  <!-- First question = identity, one tap (H-A3). -->
+  <div class="lp-q">
+    <p class="lp-lead">Let's personalise your plan</p>
+    <p class="lp-ask" id="q">Where are you in menopause?</p>
+    <div class="lp-tiles" role="radiogroup" aria-labelledby="q">
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="perimenopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Perimenopause</span><span class="rd-option__hint">Irregular periods, first hot flushes</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="menopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Menopause</span><span class="rd-option__hint">No period for about a year</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="postmenopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Postmenopause</span><span class="rd-option__hint">More than a year without a period</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="unsure"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Not sure</span><span class="rd-option__hint">We'll help you work it out</span></button>
+    </div>
+    <p class="lp-legal">By continuing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. Results vary. YouthGenom doesn't replace medical advice.</p>
+  </div>
+</main>
+<script>
+  // Prototype only: opening the landing starts a clean run, so every test click-through begins from zero
+  // (answers, discount timer, extra-discount pop-up). Coming back to it with the browser's Back keeps the answers.
+  (function () {
+    var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    if (nav && nav.type === "back_forward") return;
+    try { localStorage.removeItem("yg_rd"); localStorage.removeItem("yg_rd_deadline"); sessionStorage.removeItem("yg_rd_sd"); } catch (e) {}
+  })();
+  RD.header("0-landing", { noBack: true, account: true });
+  document.querySelectorAll("[data-stage]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("[data-stage]").forEach(function (x) { x.setAttribute("aria-checked", "false"); });
+      b.setAttribute("aria-checked", "true");
+      RD.save({ stage: b.dataset.stage });
+      setTimeout(function () { RD.next("0-landing"); }, 300);
+    });
+  });
+</script>
+</body>
+</html>

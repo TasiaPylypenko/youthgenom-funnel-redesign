@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Save your plan · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  /* What she gets, as one flat bundle (not separate white cards, which read as answer options to pick). */
+  .em-gets { display: grid; grid-template-columns: 86px 1fr; gap: 16px; align-items: center; background: var(--sand-100); border: 0; border-radius: var(--radius); padding: 16px; margin: 4px 0 22px; }
+  .em-stack { position: relative; width: 86px; height: 96px; }
+  .em-plan, .em-book { position: absolute; width: 58px; height: 74px; border-radius: 10px; }
+  .em-plan { left: 0; top: 4px; transform: rotate(-7deg); background: var(--surface); box-shadow: 0 1px 4px rgba(31,38,34,.14); padding: 9px 8px; display: grid; gap: 5px; align-content: start; }
+  .em-plan i { display: block; height: 5px; border-radius: 3px; background: #c9d8ce; }
+  .em-plan i:nth-child(1) { width: 70%; background: var(--green-700); }
+  .em-plan i:nth-child(3) { width: 80%; } .em-plan i:nth-child(5) { width: 60%; }
+  .em-book { right: 0; bottom: 0; transform: rotate(6deg); background: var(--green-700); color: #fff; padding: 8px 7px; font: 800 9px/1.15 var(--sans); letter-spacing: .04em; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 6px rgba(31,38,34,.22); }
+  .em-book svg { color: #fff; }
+  .em-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .em-list li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; }
+  .em-tick { width: 20px; height: 20px; border-radius: 50%; background: var(--brown); display: grid; place-items: center; margin-top: 1px; }
+  .em-get__title { font-weight: 700; margin: 0; font-size: 15px; line-height: 1.3; }
+  .em-get__text { font-size: 13px; color: var(--muted); margin: 2px 0 0; line-height: 1.4; }
+  .em-free { display: inline-block; vertical-align: 1px; background: var(--coral); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .05em; border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
+  .em-check { display: flex; gap: 12px; align-items: center; font-size: 15px; color: var(--ink); margin: 16px 0 0; cursor: pointer; }
+  .em-lock { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .em-lock svg { color: var(--green-700); flex: none; }
+  main.page { padding-bottom: 150px; }
+  .em-legal { font-size: 13px; color: var(--muted); margin: 0 0 10px; line-height: 1.4; text-align: center; }
+</style>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <!-- Copy leads, the picture supports (R-35). The free bonus for the email is a 7-day starter menu; the full Recipe Guide is the 6-month plan bonus on the paywall (R-36, A2). -->
+  <h1 class="rd-title">Where should we send your plan and starter menu?</h1>
+  <p class="rd-sub">Double-check your email so you get both:</p>
+
+  <div class="em-gets">
+    <div class="em-stack" aria-hidden="true">
+      <div class="em-plan"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="em-book"><span>7-DAY<br>STARTER<br>MENU</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10z"/><path d="M2 21c0-3 1.9-5.4 5.3-6.1"/></svg></div>
+    </div>
+    <ul class="em-list">
+      <li><span class="em-tick" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><div><p class="em-get__title">Your plan, saved</p><p class="em-get__text">Come back to it any time, on any device.</p></div></li>
+      <li><span class="em-tick" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><div><p class="em-get__title">7-day starter menu<span class="em-free">FREE</span></p><p class="em-get__text">Your first week of menopause-friendly meals. Yours to keep.</p></div></li>
+    </ul>
+  </div>
+
+  <div class="rd-field" style="margin-bottom:0">
+    <label class="rd-label" for="email">Your email</label>
+    <div class="rd-input-wrap" id="wrap"><input class="rd-input rd-input--text" id="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" aria-describedby="err"></div>
+    <p class="rd-error" id="err" role="alert">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>
+      <span>Enter an email like name@example.com.</span>
+    </p>
+    <p class="em-lock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>We'll never share your email. No spam, unsubscribe any time.</p>
+  </div>
+
+  <!-- Marketing consent is separate and unticked; pressing the button doesn't opt her in. -->
+  <label class="em-check"><input type="checkbox" class="rd-checkbox" id="mkt"><span>Send me tips, recipes and offers by email</span></label>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><p class="em-legal">By tapping “Get my plan” you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p><button class="rd-cta" type="button" id="cta" disabled>Get my plan</button></div></div>
+<script>
+  RD.header("25-email");
+  var s = RD.load(), input = document.getElementById("email"), wrap = document.getElementById("wrap"), err = document.getElementById("err"), cta = document.getElementById("cta"), mkt = document.getElementById("mkt");
+  if (s.email) input.value = s.email; mkt.checked = !!s.marketing;
+  function valid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+  function update(showError) {
+    var v = input.value.trim(), ok = valid(v);
+    cta.disabled = !ok;
+    var bad = v !== "" && !ok && showError;
+    wrap.classList.toggle("is-error", bad); wrap.classList.toggle("is-valid", ok); err.classList.toggle("is-visible", bad);
+  }
+  input.addEventListener("input", function () { update(false); });
+  input.addEventListener("blur", function () { update(true); });
+  cta.onclick = function () { RD.save({ email: input.value.trim(), marketing: mkt.checked }); RD.next("25-email"); };
+  update(false);
+</script>
+</body>
+</html>

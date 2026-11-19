@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your height · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <h1 class="rd-title">How tall are you?</h1>
+  <p class="rd-sub">We use your height and weight to work out your calorie needs.</p>
+
+  <div class="rd-toggle" role="group" aria-label="Units">
+    <button type="button" data-unit="metric">cm</button>
+    <button type="button" data-unit="imperial">ft / in</button>
+  </div>
+
+  <div class="rd-field" id="imperial">
+    <div class="rd-fields-row">
+      <div>
+        <label class="rd-label" for="ft">Feet</label>
+        <div class="rd-input-wrap" data-wrap><input class="rd-input" id="ft" type="text" inputmode="numeric" maxlength="1" placeholder="e.g. 5" autocomplete="off" aria-describedby="err"><span class="rd-unit">ft</span></div>
+      </div>
+      <div>
+        <label class="rd-label" for="in">Inches</label>
+        <div class="rd-input-wrap" data-wrap><input class="rd-input" id="in" type="text" inputmode="numeric" maxlength="2" placeholder="e.g. 5" autocomplete="off" aria-describedby="err"><span class="rd-unit">in</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="rd-field rd-hide" id="metric">
+    <label class="rd-label" for="cm">Height</label>
+    <div class="rd-input-wrap" data-wrap><input class="rd-input" id="cm" type="text" inputmode="numeric" maxlength="3" placeholder="e.g. 165" autocomplete="off" aria-describedby="err"><span class="rd-unit">cm</span></div>
+  </div>
+  <p class="rd-error" id="err" role="alert">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>
+    <span>Height must be between 4′0″ and 7′0″ (120–215 cm). Inches go from 0 to 11.</span>
+  </p>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta" disabled>Continue</button></div></div>
+<script>
+  RD.header("14-test");
+  var s = RD.load(), unit = s.unit || "metric";
+  var ft = document.getElementById("ft"), inch = document.getElementById("in"), cm = document.getElementById("cm");
+  var err = document.getElementById("err"), cta = document.getElementById("cta");
+  if (s.heightFt != null) ft.value = s.heightFt; if (s.heightIn != null) inch.value = s.heightIn; if (s.heightCm) cm.value = s.heightCm;
+
+  function read() {
+    if (unit === "metric") { var c = cm.value.trim(); return { ok: /^\d+$/.test(c) && +c >= 120 && +c <= 215, filled: c.length >= 3, any: c !== "" }; }
+    var f = ft.value.trim(), i = inch.value.trim() || "0";
+    var numOk = /^\d+$/.test(f) && /^\d+$/.test(i) && +i <= 11;
+    var total = numOk ? +f * 12 + +i : 0;
+    return { ok: numOk && total >= 48 && total <= 84, filled: f !== "" && (inch.value.trim() !== "" || document.activeElement !== inch), any: f !== "" || inch.value.trim() !== "" };
+  }
+  function update(showError) {
+    var r = read();
+    cta.disabled = !r.ok;
+    var bad = r.any && !r.ok && (showError || r.filled);
+    document.querySelectorAll("#" + unit + " [data-wrap]").forEach(function (w) { w.classList.toggle("is-error", bad); w.classList.toggle("is-valid", r.ok); });
+    err.classList.toggle("is-visible", bad);
+  }
+  function setUnit(u) {
+    unit = u;
+    document.querySelectorAll("[data-unit]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.unit === u ? "true" : "false"); });
+    document.getElementById("imperial").classList.toggle("rd-hide", u !== "imperial");
+    document.getElementById("metric").classList.toggle("rd-hide", u !== "metric");
+    update(false);
+  }
+  document.querySelectorAll("[data-unit]").forEach(function (b) { b.onclick = function () { setUnit(b.dataset.unit); }; });
+  [ft, inch, cm].forEach(function (el) {
+    el.addEventListener("input", function () { update(false); if (el === ft && /^\d$/.test(ft.value)) inch.focus(); });
+    el.addEventListener("blur", function () { update(true); });
+  });
+  cta.onclick = function () {
+    if (unit === "metric") RD.save({ unit: "metric", heightCm: +cm.value, heightFt: null, heightIn: null });
+    else RD.save({ unit: "imperial", heightFt: +ft.value, heightIn: +(inch.value || 0), heightCm: null });
+    RD.next("14-test");
+  };
+  setUnit(unit);
+</script>
+</body>
+</html>

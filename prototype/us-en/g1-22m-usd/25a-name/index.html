@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your name · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <!-- Name moved here from step 17: after the email, before the paywall (R-13). -->
+  <h1 class="rd-title">What should we call you?</h1>
+  <p class="rd-sub">We'll use it in your plan and when your dietitian gets in touch.</p>
+
+  <div class="rd-field">
+    <label class="rd-label" for="name">First name</label>
+    <div class="rd-input-wrap" id="wrap"><input class="rd-input rd-input--text" id="name" type="text" autocomplete="given-name" autocapitalize="words" maxlength="30" placeholder="e.g. Anna" aria-describedby="err"></div>
+    <p class="rd-error" id="err" role="alert">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>
+      <span>Use letters only, 2 to 30 characters.</span>
+    </p>
+  </div>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta" disabled>Continue</button></div></div>
+<script>
+  RD.header("25a-name");
+  var s = RD.load(), input = document.getElementById("name"), wrap = document.getElementById("wrap"), err = document.getElementById("err"), cta = document.getElementById("cta");
+  if (s.name) input.value = s.name;
+  function valid(v) { return /^[\p{L}][\p{L}' -]{1,29}$/u.test(v); }
+  function update(showError) {
+    var v = input.value.trim(), ok = valid(v);
+    cta.disabled = !ok;
+    var bad = v !== "" && !ok && (showError || /[^\p{L}' -]/u.test(v));
+    wrap.classList.toggle("is-error", bad); wrap.classList.toggle("is-valid", ok); err.classList.toggle("is-visible", bad);
+  }
+  input.addEventListener("input", function () { update(false); });
+  input.addEventListener("blur", function () { update(true); });
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter" && !cta.disabled) cta.click(); });
+  cta.onclick = function () { var v = input.value.trim(); RD.save({ name: v.charAt(0).toUpperCase() + v.slice(1) }); RD.next("25a-name"); };
+  update(false);
+</script>
+</body>
+</html>

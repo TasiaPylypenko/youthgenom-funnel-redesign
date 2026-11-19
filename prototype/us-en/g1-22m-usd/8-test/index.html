@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Real results · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  .st { background: var(--surface); border-radius: var(--radius-l); box-shadow: var(--shadow); overflow: hidden; }
+  .st-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
+  .st-photo { position: relative; height: 220px; background: var(--sand-100); overflow: hidden; }
+  .st-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
+  .st-tag { position: absolute; left: 10px; bottom: 10px; background: var(--surface); color: var(--ink); border-radius: 99px; padding: 4px 12px; font-size: 13px; font-weight: 700; box-shadow: var(--shadow); }
+  .st-body { padding: 16px 18px 18px; }
+  .st-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .st-name { font-weight: 800; font-size: 17px; margin: 0; }
+  .st-meta { font-size: 15px; color: var(--muted); margin: 2px 0 0; }
+  .st-stars { color: var(--brown); letter-spacing: 2px; font-size: 15px; }
+  .st-result { display: inline-flex; align-items: baseline; gap: 8px; background: var(--sand-100); color: var(--brown); border-radius: 99px; padding: 6px 14px; margin: 12px 0; font-size: 15px; font-weight: 800; }
+  .st-result span { font-weight: 600; }
+  .st-result b { font-weight: 800; }
+  .st-quote { font-size: 15px; color: var(--ink); margin: 0; }
+</style>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <!-- Real stories with the time it took, as a carousel (R-18). -->
+  <p class="rd-eyebrow">Real women, real results</p>
+  <h1 class="rd-title">Women in your stage are already seeing change</h1>
+  <p class="rd-sub">No overnight miracles: steady results that last, with the real time each one took.</p>
+
+  <!-- The same three members, photos, results and quotes as on the paywall (one source: the live page's real before/after pairs). -->
+  <div class="rd-carousel" id="car" aria-label="Member stories">
+    <article class="st">
+      <div class="st-photos">
+        <div class="st-photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/QK4f1R2M0O-375.webp" alt="Linda before"><span class="st-tag">Before</span></div>
+        <div class="st-photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/3clBSid5Uf-375.webp" alt="Linda after 3 months"><span class="st-tag">After 3 months</span></div>
+      </div>
+      <div class="st-body">
+        <div class="st-head"><p class="st-name">Linda, 57</p><span class="st-stars" aria-label="5 out of 5">★★★★★</span></div>
+        <p class="st-meta">Postmenopause</p>
+        <span class="st-result"><b data-lbs="14">−14 lbs</b> <span>in 3 months</span></span>
+        <p class="st-quote">“The first plan that fit my body after menopause. Slow, but it stayed off.”</p>
+      </div>
+    </article>
+    <article class="st">
+      <div class="st-photos">
+        <div class="st-photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/m3O9bqiCIL-375.webp" alt="Karen before"><span class="st-tag">Before</span></div>
+        <div class="st-photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/29ijRnH4Dz-375.webp" alt="Karen after 2 months"><span class="st-tag">After 2 months</span></div>
+      </div>
+      <div class="st-body">
+        <div class="st-head"><p class="st-name">Karen, 54</p><span class="st-stars" aria-label="5 out of 5">★★★★★</span></div>
+        <p class="st-meta">Menopause</p>
+        <span class="st-result"><b data-lbs="9">−9 lbs</b> <span>in 2 months</span></span>
+        <p class="st-quote">“My evening cravings eased within weeks.”</p>
+      </div>
+    </article>
+    <article class="st">
+      <div class="st-photos">
+        <div class="st-photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/NcTZlKFsYY-375.webp" alt="Diane before"><span class="st-tag">Before</span></div>
+        <div class="st-photo"><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/FfGBFi2YHe-375.webp" alt="Diane after 5 months"><span class="st-tag">After 5 months</span></div>
+      </div>
+      <div class="st-body">
+        <div class="st-head"><p class="st-name">Diane, 61</p><span class="st-stars" aria-label="5 out of 5">★★★★★</span></div>
+        <p class="st-meta">Postmenopause</p>
+        <span class="st-result"><b data-lbs="18">−18 lbs</b> <span>in 5 months</span></span>
+        <p class="st-quote">“Fifteen minutes of workouts at home. I never thought I'd stick to it.”</p>
+      </div>
+    </article>
+  </div>
+  <div class="rd-dots" id="dots"></div>
+
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta">Continue</button></div></div>
+<script>
+  RD.header("8-test");
+  document.getElementById("cta").onclick = function () { RD.next("8-test"); };
+  // Weight lost in the units she chose (same numbers as the paywall).
+  var unit = RD.load().unit;
+  document.querySelectorAll("[data-lbs]").forEach(function (el) { el.textContent = "−" + RD.fmtW(+el.dataset.lbs, unit); });
+  // Carousel dots
+  var car = document.getElementById("car"), dots = document.getElementById("dots"), cards = car.children;
+  dots.innerHTML = Array.prototype.map.call(cards, function (c, i) { return '<button type="button" aria-label="Story ' + (i + 1) + '"></button>'; }).join("");
+  function active() {
+    var i = Math.round(car.scrollLeft / (cards[0].offsetWidth + 12));
+    dots.querySelectorAll("button").forEach(function (b, j) { b.setAttribute("aria-current", j === i ? "true" : "false"); });
+  }
+  dots.querySelectorAll("button").forEach(function (b, i) { b.onclick = function () { cards[i].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }; });
+  car.addEventListener("scroll", function () { requestAnimationFrame(active); });
+  active();
+</script>
+</body>
+</html>

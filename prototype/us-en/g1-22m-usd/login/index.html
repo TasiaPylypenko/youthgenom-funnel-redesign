@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Log in · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  /* Login for returning users, in the funnel's style. Same functions as the live page:
+     email + password, log in, forgot password, language, support. */
+  main.page { padding-bottom: 40px; }
+  .lg-title { margin-top: 8px; }
+  .lg-form { display: grid; gap: 16px; margin-top: 20px; }
+  .lg-form .rd-field { margin: 0; }
+  .lg-eye { border: 0; background: none; padding: 8px; margin-right: -8px; color: var(--muted); cursor: pointer; display: grid; place-items: center; border-radius: 8px; }
+  .lg-eye:focus-visible { outline: 2px solid var(--green-700); }
+  .lg-error { display: none; gap: 8px; align-items: flex-start; color: var(--error); font-size: 15px; margin: 0; }
+  .lg-error.is-visible { display: flex; }
+  .lg-error svg { flex: none; margin-top: 2px; }
+  .lg-forgot { display: block; margin: 14px auto 0; text-align: center; }
+  .lg-done { display: none; text-align: center; padding: 8px 0 0; }
+  .lg-done__ic { width: 64px; height: 64px; border-radius: 50%; background: var(--green-700); color: #fff; display: grid; place-items: center; margin: 8px auto 14px; }
+  .is-sent .lg-done { display: block; }
+  .is-sent .lg-form { display: none; }
+  .lg-help { margin-top: 28px; }
+  .lg-help a { color: var(--green-700); font-weight: 700; }
+  .lg-lang { display: flex; justify-content: center; margin-top: 24px; }
+  .lg-lang label { position: relative; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--line-strong); border-radius: 99px; padding: 8px 14px; background: var(--surface); color: var(--ink); font-size: 15px; font-weight: 600; }
+  .lg-lang select { appearance: none; -webkit-appearance: none; border: 0; background: none; font: inherit; color: inherit; padding-right: 18px; cursor: pointer; }
+  .lg-lang .chev { position: absolute; right: 12px; pointer-events: none; color: var(--muted); }
+  .lg-spin { width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: lgspin .8s linear infinite; }
+  @keyframes lgspin { to { transform: rotate(360deg); } }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="page" id="page">
+  <div data-rd-header></div>
+
+  <!-- Log in -->
+  <section id="viewLogin">
+    <h1 class="rd-title lg-title">Welcome back</h1>
+    <p class="rd-sub">Log in to see your plan and manage your subscription.</p>
+
+    <form class="lg-form" id="loginForm" novalidate>
+      <div class="rd-field">
+        <label class="rd-label" for="email">Email</label>
+        <div class="rd-input-wrap" id="emailWrap"><input class="rd-input rd-input--text" id="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com"></div>
+      </div>
+      <div class="rd-field">
+        <label class="rd-label" for="pass">Password</label>
+        <div class="rd-input-wrap" id="passWrap">
+          <input class="rd-input rd-input--text" id="pass" type="password" autocomplete="current-password" placeholder="Your password">
+          <button class="lg-eye" type="button" id="eye" aria-label="Show password" aria-pressed="false">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="lg-error" id="err" role="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg><span id="errText"></span></p>
+      <button class="rd-cta" type="submit" id="loginBtn">Log in</button>
+    </form>
+    <button class="rd-link lg-forgot" type="button" id="toReset">Forgot your password?</button>
+  </section>
+
+  <!-- Reset password -->
+  <section id="viewReset" hidden>
+    <h1 class="rd-title lg-title">Reset your password</h1>
+    <p class="rd-sub">Enter the email you signed up with. We'll send you a link to set a new password.</p>
+    <form class="lg-form" id="resetForm" novalidate>
+      <div class="rd-field">
+        <label class="rd-label" for="remail">Email</label>
+        <div class="rd-input-wrap" id="remailWrap"><input class="rd-input rd-input--text" id="remail" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com"></div>
+      </div>
+      <p class="lg-error" id="rerr" role="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg><span>Enter an email like name@example.com.</span></p>
+      <button class="rd-cta" type="submit">Send reset link</button>
+    </form>
+    <div class="lg-done" role="status">
+      <div class="lg-done__ic" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <p class="rd-h3" style="margin:0 0 6px">Check your inbox</p>
+      <p class="rd-sub" style="margin:0">If an account exists for <b id="sentTo"></b>, a reset link is on its way.</p>
+    </div>
+    <button class="rd-link lg-forgot" type="button" id="toLogin" style="display:block">Back to log in</button>
+  </section>
+
+  <div class="rd-info lg-help">
+    <b>Need help?</b>
+    Questions about your plan or subscription, or couldn't find an answer? <a href="#" id="support">Contact support</a>
+  </div>
+
+  <div class="lg-lang">
+    <label>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
+      <span class="rd-visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Language</span>
+      <select id="lang" aria-label="Language">
+        <option>English</option><option>Español</option><option>Deutsch</option><option>Français</option><option>Italiano</option><option>Português</option>
+      </select>
+      <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </label>
+  </div>
+</main>
+<script>
+  RD.header("login");
+  function valid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+  var email = document.getElementById("email"), pass = document.getElementById("pass"), err = document.getElementById("err"), errText = document.getElementById("errText"), btn = document.getElementById("loginBtn");
+  var s = RD.load(); if (s.email) email.value = s.email;
+
+  function showErr(msg, wrap) {
+    errText.textContent = msg; err.classList.add("is-visible");
+    ["emailWrap", "passWrap"].forEach(function (id) { document.getElementById(id).classList.toggle("is-error", id === wrap || wrap === "both"); });
+  }
+  function clearErr() { err.classList.remove("is-visible"); ["emailWrap", "passWrap"].forEach(function (id) { document.getElementById(id).classList.remove("is-error"); }); }
+  [email, pass].forEach(function (i) { i.addEventListener("input", clearErr); });
+
+  document.getElementById("eye").onclick = function () {
+    var show = pass.type === "password"; pass.type = show ? "text" : "password";
+    this.setAttribute("aria-pressed", show ? "true" : "false"); this.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  };
+
+  document.getElementById("loginForm").onsubmit = function (e) {
+    e.preventDefault();
+    if (!valid(email.value.trim())) return showErr("Enter an email like name@example.com.", "emailWrap");
+    if (!pass.value) return showErr("Enter your password.", "passWrap");
+    // Prototype: there is no account system behind this page, so it shows the "wrong details" state.
+    btn.disabled = true; btn.innerHTML = '<span class="lg-spin" aria-hidden="true"></span><span>Logging in…</span>';
+    setTimeout(function () { btn.disabled = false; btn.textContent = "Log in"; showErr("That email and password don't match. Try again or reset your password.", "both"); }, 900);
+  };
+
+  var vLogin = document.getElementById("viewLogin"), vReset = document.getElementById("viewReset"), remail = document.getElementById("remail");
+  document.getElementById("toReset").onclick = function () { vLogin.hidden = true; vReset.hidden = false; remail.value = email.value; remail.focus(); };
+  document.getElementById("toLogin").onclick = function () { vReset.hidden = true; vLogin.hidden = false; document.getElementById("page").classList.remove("is-sent"); };
+  remail.addEventListener("input", function () { document.getElementById("rerr").classList.remove("is-visible"); document.getElementById("remailWrap").classList.remove("is-error"); });
+  document.getElementById("resetForm").onsubmit = function (e) {
+    e.preventDefault();
+    var v = remail.value.trim();
+    if (!valid(v)) { document.getElementById("rerr").classList.add("is-visible"); document.getElementById("remailWrap").classList.add("is-error"); return; }
+    document.getElementById("sentTo").textContent = v; document.getElementById("page").classList.add("is-sent");
+  };
+  document.getElementById("support").onclick = function (e) { e.preventDefault(); };
+</script>
+</body>
+</html>

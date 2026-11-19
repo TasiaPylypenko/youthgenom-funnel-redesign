@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your profile · YouthGenom</title>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<style>
+  .pf-goal { font-family: var(--serif); font-size: 23px; line-height: 1.2; margin: 0 0 14px; }
+  .pf-goal b { font-weight: 400; color: var(--green-700); }
+  .pf-legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .pf-legend i { display: inline-block; width: 16px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .pf-pace { display: inline-block; background: var(--green-50); color: var(--green-700); border-radius: 99px; padding: 4px 12px; font-size: 14px; font-weight: 800; }
+  /* Three stages on one connected timeline (not three separate cards). */
+  .tl { list-style: none; margin: 0; padding: 0; }
+  .tl li { display: grid; grid-template-columns: 28px 1fr; gap: 14px; position: relative; padding-bottom: 20px; }
+  .tl li:last-child { padding-bottom: 0; }
+  .tl li:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 30px; bottom: 0; width: 2px; background: var(--green-700); opacity: .35; }
+  .tl__dot { width: 28px; height: 28px; border-radius: 50%; background: var(--green-700); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 800; }
+  .tl__when { font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--green-700); margin: 4px 0 2px; }
+  .tl__title { font-weight: 800; font-size: 17px; margin: 0 0 2px; }
+  .tl__text { font-size: 15px; color: var(--muted); margin: 0; }
+  .pf-empathy { display: flex; gap: 14px; align-items: flex-start; background: var(--sand-100); border-radius: var(--radius); padding: 14px 16px; font-size: 15px; color: var(--ink); }
+  .pf-empathy__ic { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--brown); display: grid; place-items: center; }
+  .pf-empathy__ic svg { margin-top: 1px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <div data-rd-header></div>
+
+  <!-- Show, then ask: what she gets back for her answers, before the email (§6.1 A). -->
+  <p class="rd-eyebrow">Your profile</p>
+  <h1 class="rd-title">Here's what will change in your body</h1>
+  <p class="rd-sub" id="sub"></p>
+
+  <!-- The only projection chart in the funnel (R-21). -->
+  <section class="rd-card">
+    <p class="pf-goal">Reach <b id="goal"></b> by <span id="date"></span></p>
+    <span class="pf-pace" id="pace"></span>
+    <div class="rd-mt-s" id="chart"></div>
+  </section>
+
+  <section class="rd-section">
+    <h2 class="rd-section__title">What to expect</h2>
+    <ol class="tl">
+      <li><span class="tl__dot" aria-hidden="true">1</span><div><p class="tl__when">Weeks 1–2</p><p class="tl__title">Cravings calm down</p><p class="tl__text" id="t1"></p></div></li>
+      <li><span class="tl__dot" aria-hidden="true">2</span><div><p class="tl__when">Weeks 3–6</p><p class="tl__title">More energy, better sleep</p><p class="tl__text">Hormone-friendly meals and short home workouts start to add up.</p></div></li>
+      <li><span class="tl__dot" aria-hidden="true">3</span><div><p class="tl__when" id="w3"></p><p class="tl__title" id="t3"></p><p class="tl__text">A steady pace that protects your muscle, so the weight stays off.</p></div></li>
+    </ol>
+  </section>
+
+  <div class="pf-empathy rd-section">
+    <span class="pf-empathy__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+    <span>It's not a willpower problem, and you're not alone. Many women gain weight in menopause. A plan built for these changes makes the difference.</span>
+  </div>
+</main>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><button class="rd-cta" type="button" id="cta">Continue</button></div></div>
+<script>
+  RD.header("22a-profile");
+  var s = RD.load(), st = RD.STAGES[s.stage] || RD.STAGES.postmenopause, mo = RD.MOTIVES[s.motive] || RD.MOTIVES.both, p = RD.projection(s);
+  var trig = (s.triggers || [])[0];
+  // Her answers in one line. "Not sure" about the stage isn't something to list back to her, so it's left out.
+  var parts = [];
+  if (s.stage !== "unsure") parts.push(st.label.toLowerCase());
+  if (trig) parts.push(trig.toLowerCase() + " snacking");
+  parts.push(mo.label.toLowerCase());
+  document.getElementById("sub").textContent = "Built from your answers: " + parts.join(", ") + ".";
+  document.getElementById("goal").textContent = RD.fmtW(p.to, s.unit);
+  document.getElementById("date").textContent = RD.fmtDate(p.end);
+  document.getElementById("pace").textContent = s.unit === "metric" ? "About 0.5–1 kg a week" : "About 1–2 lbs a week";
+  document.getElementById("chart").innerHTML = RD.chartSVG(s);
+  document.getElementById("t1").textContent = trig ? "Meals and snacks are timed to your " + trig.toLowerCase() + " moments." : "Meals and snacks are timed to your day.";
+  document.getElementById("w3").textContent = p.months <= 1 ? "Month 1" : "Months 2–" + p.months;
+  document.getElementById("t3").textContent = "Reach " + RD.fmtW(p.to, s.unit);
+  document.getElementById("cta").onclick = function () { RD.next("22a-profile"); };
+</script>
+</body>
+</html>
