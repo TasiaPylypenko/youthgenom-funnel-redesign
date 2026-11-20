@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your profile · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=32">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=32"></script>
 <style>
   .pf-goal { font-family: var(--serif); font-size: 23px; line-height: 1.2; margin: 0 0 14px; }
   .pf-goal b { font-weight: 400; color: var(--green-700); }
@@ -74,6 +74,12 @@
   document.getElementById("t1").textContent = trig ? "Meals and snacks are timed to your " + trig.toLowerCase() + " moments." : "Meals and snacks are timed to your day.";
   document.getElementById("w3").textContent = p.months <= 1 ? "Week " + p.weeks : p.months === 2 ? "Month 2" : "Months 2–" + p.months;
   document.getElementById("t3").textContent = "Reach " + RD.fmtW(p.to, s.unit);
+  if (p.keep) { // nothing to lose: the plan holds her weight steady
+    document.querySelector(".pf-goal").innerHTML = "Keep <b>" + RD.fmtW(p.from, s.unit) + "</b> steady";
+    document.getElementById("pace").textContent = "Strength and energy first";
+    document.getElementById("w3").textContent = "Month 2";
+    document.getElementById("t3").textContent = "Keep " + RD.fmtW(p.from, s.unit) + " steady";
+  }
   document.getElementById("cta").onclick = function () { RD.next("22a-profile"); };
 </script>
 </body>

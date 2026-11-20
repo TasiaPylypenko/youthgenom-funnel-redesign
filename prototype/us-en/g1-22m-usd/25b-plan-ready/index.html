@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Creating your plan · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=32">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=32"></script>
 <style>
   /* Loader: soft blurred blobs in the brand colours float around the centre and slowly merge as the plan
      is built. At 100% they become one green circle with a check, and the plan is revealed. */
@@ -107,7 +107,7 @@
     : ex === "walk" ? ["Walking workouts", "Builds on what you do"]
     : ["Strength workouts", "To protect muscle as estrogen drops"];
   document.getElementById("goal").textContent = RD.fmtW(p.to, s.unit);
-  document.getElementById("goalSub").textContent = "by " + RD.fmtDate(p.end) + " · " + (s.unit === "metric" ? "about 0.5–1 kg a week" : "about 1–2 lbs a week");
+  document.getElementById("goalSub").textContent = p.keep ? "kept steady · strength and energy first" : "by " + RD.fmtDate(p.end) + " · " + (s.unit === "metric" ? "about 0.5–1 kg a week" : "about 1–2 lbs a week");
   document.getElementById("plan").innerHTML =
     tile(IC.meal, "Meals for " + stageWord, mealSub) +
     (trig.length ? tile(IC.snack, "Snacks for cravings", moments(trig)) : tile(IC.snack, "A steady meal rhythm", "So hunger doesn't build up")) +

@@ -245,9 +245,11 @@ As she types a valid goal, a card shows `share = round((1 − goal ÷ current) �
 
 Under it, her BMI scale shows today's dot, a green goal dot and a dashed trail between them. The goal's zone label turns green when it's a different zone.
 
+**Nothing to lose.** If her current weight is already at or below BMI 18.5 for her height, no goal range exists. Don't show an error: hide the field, say "Your weight is already at the lower end of the healthy range for your height, so there's no weight to lose.", show a "Keep it steady" card ("Your plan will keep your weight steady" · "It focuses on strength, energy and balanced meals instead of weight loss.") with her BMI, and let her continue with her current weight as the goal. Later screens follow: the profile says "Keep {weight} steady" with a flat line on the chart, plan ready says "kept steady", and the paywall shows the same figure twice, "steady" instead of a difference and the headline "Your plan for more energy and strength".
+
 ### 6.3 Projection (profile, plan ready, paywall)
 
-- **Pace:** about 0.7 kg (1.5 lbs) a week; at least 4 weeks. Goal date = today + weeks. Months = weeks ÷ 4.345, rounded, at least 1.
+- **Pace:** about 0.7 kg (1.5 lbs) a week; at least 4 weeks. The goal is never above her current weight. Goal date = today + weeks. Months = weeks ÷ 4.345, rounded, at least 1.
 - **Copy:** "Reach {goal} by {Month D}" and "About 0.5–1 kg a week" / "About 1–2 lbs a week".
 - **Chart:** an illustration of two trends, not her data: restrictive diets (drops, then comes back above the start) and YouthGenom (reaches her goal, then stays). Month labels: today's month, the goal month (bold) and a later month. Long month names and 3-digit weights must still fit, and the weight pills can't overlap the line.
 - **"What to expect":** Weeks 1–2 (cravings calm down; "Meals and snacks are timed to your {first snack trigger} moments", or "…timed to your day." without one), Weeks 3–6, then "Week {n}" (goal within about 6 weeks), "Month 2" or "Months 2–{n}": "Reach {goal}".

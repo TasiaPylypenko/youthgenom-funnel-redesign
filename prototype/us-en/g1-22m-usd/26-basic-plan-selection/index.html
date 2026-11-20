@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your plan · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=32">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=32"></script>
 <style>
   /* Structure: sticky discount header → Now / Your goal → title → plans, checkbox, button and terms → guarantee →
      dietitian and "featured in" → reviews → how your plan works and key facts → FAQ → plans again → guarantee again. */
@@ -381,8 +381,12 @@
   document.getElementById("now").textContent = RD.fmtW(p.from, s.unit);
   document.getElementById("after").textContent = RD.fmtW(p.to, s.unit);
   // Difference between now and the goal, in her units.
-  document.getElementById("diff").textContent = "−" + (s.unit === "metric" ? Math.round(RD.kg(p.from) - RD.kg(p.to)) + " kg" : Math.round(p.from - p.to) + " lbs");
-  document.getElementById("why6").textContent = p.months <= 6
+  if (p.keep) { // nothing to lose: the same figure on both sides, no "from → to" arrow
+    var ph = document.querySelectorAll(".pw-cmp__photos img"); ph[0].src = ph[1].src;
+    document.querySelector(".pw-cmp__arrow").style.display = "none";
+  }
+  document.getElementById("diff").textContent = p.keep ? "steady" : "−" + (s.unit === "metric" ? Math.round(RD.kg(p.from) - RD.kg(p.to)) + " kg" : Math.round(p.from - p.to) + " lbs");
+  document.getElementById("why6").textContent = p.keep ? "The 6-month plan keeps you on track, at the lowest price per day." : p.months <= 6
     ? "Your goal takes about " + p.months + (p.months === 1 ? " month" : " months") + ". The 6-month plan covers it, with time to keep the weight off."
     : "The 6-month plan gets you most of the way, at the lowest price per day.";
   // Headline follows why she wants to lose weight (step 2, R-31), in two lines at 375 px; the live headline when the answer is missing.
@@ -391,7 +395,7 @@
     looks: "Lose weight and feel like yourself again",
     both: "Lose weight for more energy and confidence"
   };
-  document.getElementById("headline").textContent = HEADLINES[s.motive] || "Get your personal weight loss program";
+  document.getElementById("headline").textContent = p.keep ? "Your plan for more energy and strength" : HEADLINES[s.motive] || "Get your personal weight loss program";
   // Reviews: the weight lost in the units she chose at the start.
   document.querySelectorAll("[data-lbs]").forEach(function (el) { el.textContent = "−" + RD.fmtW(+el.dataset.lbs, s.unit); }); // same numbers as step 8
 

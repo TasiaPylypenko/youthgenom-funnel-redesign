@@ -66,10 +66,11 @@
 
   // Realistic projection: about 1.5 lbs a week (R-21).
   function projection(s) {
-    var from = s.weightLbs || 180, to = s.targetLbs || suggestedTarget(s) || Math.round(from * 0.92);
+    var from = s.weightLbs || 180, to = Math.min(from, s.targetLbs || suggestedTarget(s) || Math.round(from * 0.92));
     var weeks = Math.max(4, Math.ceil((from - to) / 1.5));
     var end = new Date(); end.setDate(end.getDate() + weeks * 7);
-    return { from: from, to: to, weeks: weeks, months: Math.max(1, Math.round(weeks / 4.345)), end: end };
+    // keep: her weight is already at the healthy minimum for her height, so the plan holds it steady instead of lowering it.
+    return { from: from, to: to, keep: to >= from, weeks: weeks, months: Math.max(1, Math.round(weeks / 4.345)), end: end };
   }
   function fmtDate(d) { return d.toLocaleDateString("en-US", { month: "long", day: "numeric" }); }
   function fmtMonth(d) { return d.toLocaleDateString("en-US", { month: "short" }); }
@@ -91,15 +92,19 @@
       return d;
     }
     var diet = smooth([[X(0), yS], [X(.1), yS + 6], [X(.3), yD + 4], [X(.46), yD - 32], [X(.62), yD + 10], [X(.78), yD - 44], [X(.88), yD - 2], [X(1), yS - 14]]);
-    var fG = .45, xG = X(fG);
-    var plan = "M" + X(0) + " " + yS + " C" + X(.16) + " " + yS + " " + X(.27) + " " + yG + " " + xG + " " + yG + " L" + (xR - 48) + " " + yG; // ends under the "YouthGenom" label
+    var fG = .45, xG = X(fG), keep = p.keep;
+    if (keep) yG = yS; // her line stays flat at today's weight
+    // The "YouthGenom" label: at the end of her line, or above the flat line where the diet curve doesn't reach.
+    var lx = keep ? X(.45) - 48 : xR - 96, ly = keep ? yS - 36 : yG - 13;
+    var plan = keep ? "M" + X(0) + " " + yS + " L" + (xR - 4) + " " + yS
+      : "M" + X(0) + " " + yS + " C" + X(.16) + " " + yS + " " + X(.27) + " " + yG + " " + xG + " " + yG + " L" + (xR - 48) + " " + yG; // ends under the "YouthGenom" label
     var font = 'font-family="-apple-system, BlinkMacSystemFont, sans-serif"';
     // time labels: start, goal date, and a later date when the weight is still off
     var t0 = new Date(), tEnd = new Date(); tEnd.setDate(tEnd.getDate() + Math.round(p.weeks * 7 * (.85 - .12) / (fG - .12)));
     var vgrid = "";
     [.12, .3, fG, .62, .85].forEach(function (f) { vgrid += '<line x1="' + X(f) + '" x2="' + X(f) + '" y1="' + (yS + 14) + '" y2="' + yB + '"/>'; });
     var from = fmtW(p.from, unit), to = fmtW(p.to, unit), fw = Math.round(from.length * 8 + 26), tw = Math.round(to.length * 8 + 26);
-    return '<svg class="rd-chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Your plan: from ' + from + " to " + to + " by " + fmtDate(p.end) + ', then the weight stays off. Restrictive diets: the weight drops fast, then comes back in waves.">' +
+    return '<svg class="rd-chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + (keep ? "Your plan keeps your weight steady at " + from + "." : "Your plan: from " + from + " to " + to + " by " + fmtDate(p.end) + ", then the weight stays off.") + ' Restrictive diets: the weight drops fast, then comes back in waves.">' +
       '<defs><clipPath id="rdregain"><rect x="' + X(.3) + '" y="0" width="' + (xR - X(.3)) + '" height="' + yD + '"/></clipPath>' +
       '<filter id="rdsh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-color="#1f2622" flood-opacity=".22"/></filter></defs>' +
       '<g stroke="#e3ddd2" stroke-dasharray="3 4">' + vgrid + "</g>" +
@@ -116,12 +121,12 @@
       '<rect x="' + (xR - 118) + '" y="28" width="118" height="26" rx="13" fill="#fbe9e2"/>' +
       '<text x="' + (xR - 59) + '" y="45.5" ' + font + ' font-size="12" font-weight="700" fill="#7a2c12" text-anchor="middle">Restrictive diets</text>' +
       // goal: dot on the line, pill below-left
-      '<circle cx="' + xG + '" cy="' + yG + '" r="9" fill="#fff" filter="url(#rdsh)"/><circle cx="' + xG + '" cy="' + yG + '" r="5" fill="#245a40"/>' +
+      (keep ? "" : '<circle cx="' + xG + '" cy="' + yG + '" r="9" fill="#fff" filter="url(#rdsh)"/><circle cx="' + xG + '" cy="' + yG + '" r="5" fill="#245a40"/>' +
       '<rect x="' + (xG - tw - 10) + '" y="' + (yG + 8) + '" width="' + tw + '" height="28" rx="14" fill="#1f2622"/>' +
-      '<text x="' + (xG - tw / 2 - 10) + '" y="' + (yG + 27) + '" ' + font + ' font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle">' + to + "</text>" +
+      '<text x="' + (xG - tw / 2 - 10) + '" y="' + (yG + 27) + '" ' + font + ' font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle">' + to + "</text>") +
       // her plan label at the end of its line
-      '<rect x="' + (xR - 96) + '" y="' + (yG - 13) + '" width="96" height="26" rx="13" fill="#e2efe5"/>' +
-      '<text x="' + (xR - 48) + '" y="' + (yG + 4.5) + '" ' + font + ' font-size="12" font-weight="700" fill="#183f2d" text-anchor="middle">YouthGenom</text>' +
+      '<rect x="' + lx + '" y="' + ly + '" width="96" height="26" rx="13" fill="#e2efe5"/>' +
+      '<text x="' + (lx + 48) + '" y="' + (ly + 17.5) + '" ' + font + ' font-size="12" font-weight="700" fill="#183f2d" text-anchor="middle">YouthGenom</text>' +
       '<g ' + font + ' font-size="12.5" font-weight="600" fill="#4a4f4b" text-anchor="middle">' +
       '<text x="' + X(.12) + '" y="' + (H - 10) + '">' + fmtMonth(t0) + "</text>" +
       '<text x="' + xG + '" y="' + (H - 10) + '" font-weight="800" fill="#1f2622">' + fmtMonth(p.end) + "</text>" +

@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your goal weight · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=32">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=32"></script>
 </head>
 <body>
 <main class="page">
@@ -73,8 +73,24 @@
   }
   input.addEventListener("input", function () { update(false); });
   input.addEventListener("blur", function () { update(true); });
-  cta.onclick = function () { RD.save({ targetLbs: toL(input.value.trim().replace(",", ".")) }); RD.next("16-test"); };
-  update(false);
+  // Nothing to lose: her current weight is already at (or below) BMI 18.5 for her height, so no goal range exists.
+  // Instead of an impossible error, the plan keeps her weight steady and she can go on.
+  var keep = minL > maxL;
+  function showKeep() {
+    document.querySelector(".rd-sub").textContent = "Your weight is already at the lower end of the healthy range for your height, so there's no weight to lose.";
+    document.querySelector(".rd-field").hidden = true;
+    var tag = document.getElementById("tag");
+    tag.className = "rd-goalcard__tag rd-goalcard__tag--easy";
+    tag.innerHTML = '<span class="rd-goalcard__ico">' + CHECK + '</span>Keep it steady';
+    document.getElementById("gTitle").textContent = "Your plan will keep your weight steady";
+    document.getElementById("gText").textContent = "It focuses on strength, energy and balanced meals instead of weight loss.";
+    var b0 = RD.bmi(current, inches);
+    if (b0) { var ci = RD.bmiInfo(b0), badge = document.getElementById("bmiBadge"); badge.textContent = ci.badge; badge.className = "rd-badge rd-badge--" + ci.cls; document.getElementById("bmiScale").innerHTML = RD.bmiScale(b0); }
+    document.getElementById("goal").hidden = false;
+    cta.disabled = false;
+  }
+  cta.onclick = function () { RD.save({ targetLbs: keep ? current : toL(input.value.trim().replace(",", ".")) }); RD.next("16-test"); };
+  if (keep) showKeep(); else update(false);
 </script>
 </body>
 </html>
