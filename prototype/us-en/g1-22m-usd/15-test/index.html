@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your weight · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 </head>
 <body>
 <main class="page">
@@ -39,7 +39,7 @@
   var min = metric ? 35 : 80, max = metric ? 250 : 550;
   document.getElementById("u").textContent = metric ? "kg" : "lbs";
   input.placeholder = metric ? "e.g. 80" : "e.g. 180";
-  document.getElementById("errText").textContent = "Weight must be between 80 and 550 lbs (35–250 kg).";
+  document.getElementById("errText").textContent = metric ? "Weight must be between 35 and 250 kg." : "Weight must be between 80 and 550 lbs.";
   if (s.weightLbs) input.value = metric ? RD.kg(s.weightLbs) : s.weightLbs;
 
   function lbs(v) { return metric ? RD.lbsFromKg(+v) : +v; }
@@ -54,7 +54,7 @@
   }
   input.addEventListener("input", function () { update(false); });
   input.addEventListener("blur", function () { update(true); });
-  cta.onclick = function () { RD.save({ weightLbs: lbs(input.value.trim().replace(",", ".")), targetLbs: null }); RD.next("15-test"); };
+  cta.onclick = function () { var w = lbs(input.value.trim().replace(",", ".")), patch = { weightLbs: w }; if (w !== s.weightLbs) patch.targetLbs = null; RD.save(patch); RD.next("15-test"); };
   RD.bmiAbout(document.getElementById("aboutBtn"), document.getElementById("about"));
   update(false);
 </script>

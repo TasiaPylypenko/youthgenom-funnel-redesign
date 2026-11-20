@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Real results · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 <style>
   .st { background: var(--surface); border-radius: var(--radius-l); box-shadow: var(--shadow); overflow: hidden; }
   .st-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
@@ -91,6 +91,7 @@
   dots.querySelectorAll("button").forEach(function (b, i) { b.onclick = function () { cards[i].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }; });
   car.addEventListener("scroll", function () { requestAnimationFrame(active); });
   active();
+  RD.carousel(car, { hint: "stories" });
 </script>
 </body>
 </html>

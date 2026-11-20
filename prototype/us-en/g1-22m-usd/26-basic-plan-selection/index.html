@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your plan · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 <style>
   /* Structure: sticky discount header → Now / Your goal → title → plans, checkbox, button and terms → guarantee →
      dietitian and "featured in" → reviews → how your plan works and key facts → FAQ → plans again → guarantee again. */
@@ -476,16 +476,19 @@
     function active() { var i = Math.round(car.scrollLeft / (cards[0].offsetWidth + 12)); dots.querySelectorAll("button").forEach(function (b, j) { b.setAttribute("aria-current", j === i ? "true" : "false"); }); }
     dots.querySelectorAll("button").forEach(function (b, i) { b.onclick = function () { car.scrollTo({ left: cards[i].offsetLeft - car.offsetLeft - (car.clientWidth - cards[i].offsetWidth) / 2, behavior: "smooth" }); }; });
     car.addEventListener("scroll", function () { requestAnimationFrame(active); }); active();
+    RD.carousel(car); // same feel as screen 8; the swipe hint was already shown there
   }
   carousel("car", "dots", "Story");
   carousel("steps", "stepDots", "Step");
 
   var sd = document.getElementById("sd"), back = document.getElementById("sdBack");
-  function closeSheet() { sd.classList.remove("is-open"); back.classList.remove("is-open"); setTimeout(function () { back.classList.add("rd-hide"); }, 250); }
+  var lastFocus = null;
+  function closeSheet() { if (!sd.classList.contains("is-open")) return; sd.classList.remove("is-open"); back.classList.remove("is-open"); setTimeout(function () { back.classList.add("rd-hide"); }, 250); if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); }
   function openSheet() {
     if (tier !== "std" || sessionStorage.getItem("yg_rd_sd")) return; // not after the timer has ended
     sessionStorage.setItem("yg_rd_sd", "1");
-    back.classList.remove("rd-hide"); requestAnimationFrame(function () { back.classList.add("is-open"); sd.classList.add("is-open"); });
+    lastFocus = document.activeElement;
+    back.classList.remove("rd-hide"); requestAnimationFrame(function () { back.classList.add("is-open"); sd.classList.add("is-open"); document.getElementById("sdYes").focus({ preventScroll: true }); });
   }
   new IntersectionObserver(function (e) { if (e[0].isIntersecting) setTimeout(openSheet, 1200); }, { threshold: .3 }).observe(document.getElementById("proof"));
   document.getElementById("sdNo").onclick = closeSheet; back.onclick = closeSheet;

@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Creating your plan · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 <style>
   /* Loader: soft blurred blobs in the brand colours float around the centre and slowly merge as the plan
      is built. At 100% they become one green circle with a check, and the plan is revealed. */
@@ -53,7 +53,7 @@
 <body>
 <main class="page" id="page">
   <div data-rd-header></div>
-  <h1 class="rd-title ld-title" id="title" aria-live="polite">Creating your personalised plan</h1>
+  <h1 class="rd-title ld-title" id="title" aria-live="polite">Creating your personalized plan</h1>
 
   <div class="ld-orb" aria-hidden="true">
     <div class="ld-blobs" id="blobs"></div>
@@ -62,7 +62,7 @@
 
   <div class="ld-status" role="status">
     <p class="ld-pct" id="pct">0%</p>
-    <p class="ld-step" id="step">Analysing your answers</p>
+    <p class="ld-step" id="step">Analyzing your answers</p>
   </div>
 
   <div class="ld-ready">
@@ -75,7 +75,7 @@
     <div class="pr-grid" id="plan"></div>
   </div>
 </main>
-<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><div class="ld-proof"> <div class="rd-avatars" aria-hidden="true"> <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/QK4f1R2M0O-375.webp" alt=""><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/FfGBFi2YHe-375.webp" alt=""><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/WaUsL4Q8JV-375.webp" alt=""> </div> <p><b>2M+</b> personalised plans created</p> </div><button class="rd-cta" type="button" id="cta" disabled>Creating your plan…</button></div></div>
+<div class="rd-cta-bar"><div class="rd-cta-bar__inner"><div class="ld-proof"> <div class="rd-avatars" aria-hidden="true"> <img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/QK4f1R2M0O-375.webp" alt=""><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/FfGBFi2YHe-375.webp" alt=""><img src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/img/WaUsL4Q8JV-375.webp" alt=""> </div> <p><b>2M+</b> personalized plans created</p> </div><button class="rd-cta" type="button" id="cta" disabled>Creating your plan…</button></div></div>
 <script>
   RD.header("25b-plan-ready");
   var s = RD.load(), p = RD.projection(s), st = RD.STAGES[s.stage] || RD.STAGES.postmenopause, mo = RD.MOTIVES[s.motive] || RD.MOTIVES.both;
@@ -116,7 +116,7 @@
 
   var page = document.getElementById("page"), cta = document.getElementById("cta"), stepEl = document.getElementById("step"), pctEl = document.getElementById("pct");
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var STEPS = ["Analysing your answers", "Matching meals to your stage", "Choosing workouts for your level", "Setting up your dietitian review"];
+  var STEPS = ["Analyzing your answers", "Matching meals to your stage", "Choosing workouts for your level", "Setting up your dietitian review"];
   var DURATION = reduce ? 2400 : 7000;
 
   // Blobs: colour, size, start angle, orbit speed, orbit shape. Brand palette: sand, tan, sage, green, warm peach.

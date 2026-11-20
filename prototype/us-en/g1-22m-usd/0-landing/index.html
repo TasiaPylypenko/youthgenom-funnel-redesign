@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your menopause weight plan · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 <style>
   /* Layout like the reference: title on top, the photo is part of the screen, the question sits over its lower part. */
   .lp { position: relative; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: 20px; overflow: hidden; }
@@ -20,12 +20,17 @@
   .lp-q { position: relative; z-index: 2; margin-top: -110px; }
   .lp-lead { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--green-700); margin: 0 0 4px; }
   .lp-ask { text-align: center; font-size: 20px; font-weight: 800; margin: 0 0 14px; }
-  .lp-tiles { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
-  /* Radio on the same line as the title, hint below: compact, square-ish tiles. */
-  .lp-tiles .rd-option--tile { display: grid; grid-template-columns: 1fr 24px; grid-template-areas: "label check" "hint hint"; column-gap: 8px; row-gap: 4px; align-items: center; align-content: start; min-height: 84px; padding: 12px; text-align: left; }
-  .lp-tiles .rd-option--tile .rd-option__check { position: static; grid-area: check; }
-  .lp-tiles .rd-option--tile .rd-option__label { grid-area: label; padding-right: 0; font-size: 15px; letter-spacing: -.01em; }
-  .lp-tiles .rd-option--tile .rd-option__hint { grid-area: hint; margin-top: 0; }
+  .lp-tiles { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; }
+  /* Radio on the same line as the title, hint below: compact, square-ish tiles.
+     Long titles (small phones, translations) never break mid-word and never push the radio out. Fit order, decided by fitTiles() for the whole group so a row stays consistent:
+     1. title beside the radio (default); 2. --stacked: radio in the top-right, title on its own row below it; 3. --one: one tile per row. The font size never shrinks. */
+  .lp-tiles .rd-option--tile { display: grid; grid-template-columns: minmax(0,1fr) 22px; grid-template-areas: "label check" "hint hint"; column-gap: 4px; row-gap: 6px; align-items: center; align-content: start; min-height: 84px; padding: 14px 12px; text-align: left; }
+  .lp-tiles .rd-option--tile .rd-option__check { position: static; grid-area: check; width: 22px; height: 22px; }
+  .lp-tiles .rd-option--tile .rd-option__label { grid-area: label; padding-right: 0; font-size: 14px; font-weight: 700; letter-spacing: 0; overflow-wrap: normal; word-break: normal; }
+  .lp-tiles .rd-option--tile .rd-option__hint { grid-area: hint; margin-top: 0; overflow-wrap: break-word; hyphens: auto; }
+  .lp-tiles--stacked .rd-option--tile { grid-template-areas: ". check" "label label" "hint hint"; }
+  .lp-tiles--one { grid-template-columns: minmax(0,1fr); }
+  .lp-tiles--one .rd-option--tile { min-height: 0; }
   .lp-legal { font-size: 12px; color: var(--muted); text-align: center; margin: 16px 0 0; line-height: 1.45; }
 </style>
 </head>
@@ -42,13 +47,13 @@
 
   <!-- First question = identity, one tap (H-A3). -->
   <div class="lp-q">
-    <p class="lp-lead">Let's personalise your plan</p>
+    <p class="lp-lead">Let's personalize your plan</p>
     <p class="lp-ask" id="q">Where are you in menopause?</p>
     <div class="lp-tiles" role="radiogroup" aria-labelledby="q">
-      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="perimenopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Perimenopause</span><span class="rd-option__hint">Irregular periods, first hot flushes</span></button>
-      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="menopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Menopause</span><span class="rd-option__hint">No period for about a year</span></button>
-      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="postmenopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Postmenopause</span><span class="rd-option__hint">More than a year without a period</span></button>
-      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="unsure"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Not sure</span><span class="rd-option__hint">We'll help you work it out</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="perimenopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Perimenopause</span><span class="rd-option__hint">Irregular periods, first hot flashes</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="menopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Menopause</span><span class="rd-option__hint">No period for 1&#8288;–&#8288;2&nbsp;years</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="postmenopause"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Postmenopause</span><span class="rd-option__hint">No period for 2&#8288;+&nbsp;years</span></button>
+      <button class="rd-option rd-option--tile" type="button" role="radio" aria-checked="false" data-stage="unsure"><span class="rd-option__check" aria-hidden="true"></span><span class="rd-option__label">Not sure</span><span class="rd-option__hint">Your plan adjusts as we learn more</span></button>
     </div>
     <p class="lp-legal">By continuing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. Results vary. YouthGenom doesn't replace medical advice.</p>
   </div>
@@ -62,6 +67,21 @@
     try { localStorage.removeItem("yg_rd"); localStorage.removeItem("yg_rd_deadline"); sessionStorage.removeItem("yg_rd_sd"); } catch (e) {}
   })();
   RD.header("0-landing", { noBack: true, account: true });
+  // Pick the first layout in which no title overflows its box (see the CSS note above).
+  (function () {
+    var g = document.querySelector(".lp-tiles");
+    function overflows() { return [].some.call(g.querySelectorAll(".rd-option__label"), function (l) { return l.scrollWidth > l.clientWidth + 1; }); }
+    function fitTiles() {
+      g.classList.remove("lp-tiles--stacked", "lp-tiles--one");
+      if (!overflows()) return;
+      g.classList.add("lp-tiles--stacked");
+      if (!overflows()) return;
+      g.classList.remove("lp-tiles--stacked"); g.classList.add("lp-tiles--one");
+    }
+    fitTiles();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTiles);
+    var t; window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(fitTiles, 100); });
+  })();
   document.querySelectorAll("[data-stage]").forEach(function (b) {
     b.addEventListener("click", function () {
       document.querySelectorAll("[data-stage]").forEach(function (x) { x.setAttribute("aria-checked", "false"); });

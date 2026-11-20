@@ -243,9 +243,9 @@ a { color: var(--green-700); }
 /* Carousel (reviews, stories) */
 .rd-carousel { display: flex; gap: var(--s-3); overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(-1 * var(--gutter)); padding: 4px var(--gutter) 12px; scrollbar-width: none; }
 .rd-carousel::-webkit-scrollbar { display: none; }
-.rd-carousel > * { flex: 0 0 86%; scroll-snap-align: center; }
+.rd-carousel > * { flex: 0 0 86%; scroll-snap-align: center; scroll-snap-stop: always; transform-origin: center; }
 .rd-dots { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
-.rd-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; background: var(--sand-200); padding: 0; cursor: pointer; }
+.rd-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; background: var(--sand-200); padding: 0; cursor: pointer; transition: width .35s cubic-bezier(.2,.8,.2,1), background-color .35s; }
 .rd-dots button[aria-current="true"] { background: var(--green-700); width: 24px; border-radius: 99px; }
 
 .rd-divider { height: 1px; background: var(--line); margin: var(--s-6) 0; }

@@ -234,9 +234,53 @@
     var id = setInterval(tick, 1000); tick();
   }
 
+
+  // Carousels feel like Apple's: one card per swipe (CSS snap), the side cards sit slightly smaller so the centre one
+  // reads as "closer", and the dots glide. No autoplay: she reads at her own pace (decided 2026-11-20).
+  // opts.hint: once per session, 1.5 s after the carousel is in view and untouched, the cards slide left a little and
+  // spring back to show there is more to swipe. Nothing moves on its own for "Reduce motion" users.
+  function carousel(car, opts) {
+    opts = opts || {};
+    var cards = car.children;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function depth() {
+      if (reduce) return;
+      var c = car.getBoundingClientRect(), mid = c.left + c.width / 2, ds = [], min = 1;
+      for (var i = 0; i < cards.length; i++) {
+        var r = cards[i].getBoundingClientRect(); ds[i] = Math.abs(r.left + r.width / 2 - mid) / r.width; min = Math.min(min, ds[i]);
+      }
+      // The first and last cards snap off-centre, so distances count from the closest card: it is always full size.
+      for (var j = 0; j < cards.length; j++) cards[j].style.transform = "scale(" + (1 - 0.05 * Math.min(1, ds[j] - min)).toFixed(4) + ")";
+    }
+    car.addEventListener("scroll", function () { requestAnimationFrame(depth); }, { passive: true });
+    window.addEventListener("resize", depth);
+    depth();
+    if (!opts.hint || reduce || !window.IntersectionObserver || !Element.prototype.animate) return;
+    var key = "yg_rd_hint_" + opts.hint, seen = null, touched = false;
+    try { seen = sessionStorage.getItem(key); } catch (e) {}
+    if (seen) return;
+    ["pointerdown", "touchstart", "wheel", "keydown"].forEach(function (ev) { car.addEventListener(ev, function () { touched = true; }, { passive: true }); });
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      setTimeout(function () {
+        if (touched || car.scrollLeft > 4) return;
+        try { sessionStorage.setItem(key, "1"); } catch (e) {}
+        Array.prototype.forEach.call(cards, function (card) {
+          card.animate([
+            { translate: "0 0", easing: "cubic-bezier(.3,0,.2,1)" },
+            { translate: "-48px 0", offset: 0.4, easing: "cubic-bezier(.34,1.35,.64,1)" },
+            { translate: "0 0" }
+          ], { duration: 1200 });
+        });
+      }, 1500);
+    }, { threshold: 0.6 });
+    io.observe(car);
+  }
+
   window.RD = {
     BASE: BASE, load: load, save: save, next: next, header: header, timer: timer,
     STAGES: STAGES, MOTIVES: MOTIVES, heightInches: heightInches, bmi: bmi, kg: kg, lbsFromKg: lbsFromKg,
-    fmtW: fmtW, bmiInfo: bmiInfo, bmiAbout: bmiAbout, bmiScale: bmiScale, bmiMsg: bmiMsg, suggestedTarget: suggestedTarget, projection: projection, fmtDate: fmtDate, chartSVG: chartSVG
+    fmtW: fmtW, bmiInfo: bmiInfo, bmiAbout: bmiAbout, bmiScale: bmiScale, bmiMsg: bmiMsg, suggestedTarget: suggestedTarget, projection: projection, fmtDate: fmtDate, chartSVG: chartSVG, carousel: carousel
   };
 })();

@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your goal weight · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 </head>
 <body>
 <main class="page">
@@ -46,7 +46,10 @@
   var minL = inches ? Math.ceil(18.5 * inches * inches / 703) : 90, maxL = current - 1, unitTxt = metric ? "kg" : "lbs";
   document.getElementById("u").textContent = unitTxt;
   input.placeholder = "e.g. " + toU(Math.round(current * 0.92));
-  document.getElementById("errText").textContent = "Goal weight must be between " + toU(minL) + " and " + toU(maxL) + " " + unitTxt + ": below your current weight and within a healthy range for your height.";
+  // In kg, show the nearest whole kg values that pass the lbs check, so the numbers in the text are always accepted.
+  var minU = toU(minL), maxU = toU(maxL);
+  if (metric) { while (toL(minU) < minL) minU++; while (toL(maxU) > maxL) maxU--; }
+  document.getElementById("errText").textContent = "Goal weight must be between " + minU + " and " + maxU + " " + unitTxt + ": below your current weight and within a healthy range for your height.";
   if (s.targetLbs) input.value = toU(s.targetLbs);
   RD.bmiAbout(document.getElementById("aboutBtn"), document.getElementById("about"));
 

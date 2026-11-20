@@ -4,8 +4,8 @@
 <meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your profile · YouthGenom</title>
-<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=30">
-<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=30"></script>
+<link rel="stylesheet" href="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.css?v=31">
+<script src="/youthgenom-funnel-redesign/prototype/us-en/g1-22m-usd/redesign/rd.js?v=31"></script>
 <style>
   .pf-goal { font-family: var(--serif); font-size: 23px; line-height: 1.2; margin: 0 0 14px; }
   .pf-goal b { font-weight: 400; color: var(--green-700); }
@@ -60,7 +60,7 @@
 <script>
   RD.header("22a-profile");
   var s = RD.load(), st = RD.STAGES[s.stage] || RD.STAGES.postmenopause, mo = RD.MOTIVES[s.motive] || RD.MOTIVES.both, p = RD.projection(s);
-  var trig = (s.triggers || [])[0];
+  var trig = (s.triggers || []).filter(function (t) { return t !== "Something else"; })[0];
   // Her answers in one line. "Not sure" about the stage isn't something to list back to her, so it's left out.
   var parts = [];
   if (s.stage !== "unsure") parts.push(st.label.toLowerCase());
@@ -72,7 +72,7 @@
   document.getElementById("pace").textContent = s.unit === "metric" ? "About 0.5–1 kg a week" : "About 1–2 lbs a week";
   document.getElementById("chart").innerHTML = RD.chartSVG(s);
   document.getElementById("t1").textContent = trig ? "Meals and snacks are timed to your " + trig.toLowerCase() + " moments." : "Meals and snacks are timed to your day.";
-  document.getElementById("w3").textContent = p.months <= 1 ? "Month 1" : "Months 2–" + p.months;
+  document.getElementById("w3").textContent = p.months <= 1 ? "Week " + p.weeks : p.months === 2 ? "Month 2" : "Months 2–" + p.months;
   document.getElementById("t3").textContent = "Reach " + RD.fmtW(p.to, s.unit);
   document.getElementById("cta").onclick = function () { RD.next("22a-profile"); };
 </script>
